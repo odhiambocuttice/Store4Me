@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SplashView extends AppCompatActivity {
 
-    private static int SPLASHCREEN = 4000;
+    private static int SPLASHCREEN = 3000;
 
     public FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthlistener;
@@ -36,17 +36,17 @@ public class SplashView extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
-        BottomAmin = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
-        SideAnim = AnimationUtils.loadAnimation(this,R.anim.side_animation);
+//        BottomAmin = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
+//        SideAnim = AnimationUtils.loadAnimation(this,R.anim.side_animation);
 
         shelfimage = findViewById(R.id.imageView);
-        shelfimage2 = findViewById(R.id.shelf2);
-        logo = findViewById(R.id.textView2);
+//        shelfimage2 = findViewById(R.id.shelf2);
+//        logo = findViewById(R.id.textView2);
         slogan = findViewById(R.id.textView3);
 
         shelfimage.setAnimation(topAnim);
-        shelfimage2.setAnimation(SideAnim);
-        logo.setAnimation(BottomAmin);
+//        shelfimage2.setAnimation(SideAnim);
+//        logo.setAnimation(BottomAmin);
         slogan.setAnimation(BottomAmin);
 
         mAuthlistener =  new FirebaseAuth.AuthStateListener() {

@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                         .title("You"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
             }
         };
