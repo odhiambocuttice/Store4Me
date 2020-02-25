@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Store4Me</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="textview">TextView</string>
+    <string name="create_account">Create account</string>
+    <string name="phone_number">Phone number</string>
+    <string name="username">Username</string>
+    <string name="sign_in_here_now">Sign in here!!</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="navigation_drawer_open">Open Nav Drawer</string>
+    <string name="navigation_drawer_close">Close Nav Drawer</string>
+
+</resources>
