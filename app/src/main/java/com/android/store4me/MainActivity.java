@@ -21,6 +21,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -62,9 +63,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.auth.User;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.List;
+
+import io.opencensus.tags.Tag;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
@@ -89,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final float DEFAULT_ZOOM = 16.0f;
     private Marker mUserLocMarker;
 
+    private UserLocation mUserLocation;
+    private static final String TAG = "MainActivity";
 
 
     @Override
@@ -121,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Places.initialize(MainActivity.this, "AIzaSyBSsito8De4lKFIzsynye7fSHgw54-d0Uk");
         placesClient = Places.createClient(this);
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+
 
 
         DocumentReference documentReference = mfirestore.collection("Backpacks").document(BackpackID);
@@ -164,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
             }
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -211,11 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-
-        //getDeviceLocation();
         getLocation();
-
-
 
     }
 
@@ -260,7 +266,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
     }
+    private void saveUserLocation(){
+
+        if(mUserLocation != null){
+            BackpackID = mAuth.getCurrentUser().getUid();
+            DocumentReference locationRef = mfirestore.collection( "User Location").document(BackpackID);
+
+            locationRef.set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "saveUserLocation: \ninserted user location into database." +
+                                "\n latitude: " + mUserLocation.getGeo_point().getLatitude() +
+                                "\n longitude: " + mUserLocation.getGeo_point().getLongitude());
+                    }
+                }
+            });
+        }
+    }
+    private void getUserDetails(){
+        if(mUserLocation == null){
+            mUserLocation = new UserLocation();
+            DocumentReference userRef = mfirestore.collection("Backpacks")
+                    .document(FirebaseAuth.getInstance().getUid());
+
+            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "onComplete: successfully set the user client.");
+                        User user = task.getResult().toObject(User.class);
+                        mUserLocation.setUser(user);
+                        getLocation();
+                    }
+                }
+            });
+        }
+        else{
+            getLocation();
+        }
+    }
+
 
     //INTENET PERMISSION
     private boolean isConnected(){
