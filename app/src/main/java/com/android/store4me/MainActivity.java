@@ -1,17 +1,6 @@
 package com.android.store4me;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,15 +10,19 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -63,12 +56,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.auth.User;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
+import java.util.HashMap;
 import java.util.List;
-
-import io.opencensus.tags.Tag;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
@@ -156,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        //GIVE PERMISSION
+        //GIVE INTERNET PERMISSION
         if (!isConnected()){
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -170,9 +162,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     })
                     .show();
         }
-
-            }
-
+          }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -225,15 +215,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 51){
-            if (resultCode == RESULT_OK){
-                //getDeviceLocation();
-            }
-        }
-    }
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationClient;
 
@@ -251,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (mUserLocMarker!=null) {
                     mUserLocMarker.remove();
                 }
+
                 mLastKnownLocation = locationResult.getLastLocation();
                 mUserLocMarker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
@@ -258,6 +240,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("You"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
+                // ------------ GET DATA -----------------
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("Backpacks")
+                        .document(FirebaseAuth.getInstance().getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        // --------------- SET DATA ------------------------
+                        DocumentSnapshot doc = task.getResult();
+                        DocumentReference locationRef = mfirestore.collection("User Location")
+                                .document(FirebaseAuth.getInstance().getUid());
+                        //Create Profile
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("latitude" ,mLastKnownLocation.getLatitude());
+                        user.put("longitude",mLastKnownLocation.getLongitude());
+                        user.put("fName",doc.get("fName"));
+
+
+                        if (mLastKnownLocation!=null) {
+                            locationRef.set(user);
+                        }
+
+                        //Toast.makeText(MainActivity.this, "" + task.getResult().getData().toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
             }
         };
 
@@ -266,49 +275,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        //getUserDetails();
 
     }
-    private void saveUserLocation(){
-
-        if(mUserLocation != null){
-            BackpackID = mAuth.getCurrentUser().getUid();
-            DocumentReference locationRef = mfirestore.collection( "User Location").document(BackpackID);
-
-            locationRef.set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Log.d(TAG, "saveUserLocation: \ninserted user location into database." +
-                                "\n latitude: " + mUserLocation.getGeo_point().getLatitude() +
-                                "\n longitude: " + mUserLocation.getGeo_point().getLongitude());
-                    }
-                }
-            });
-        }
-    }
-    private void getUserDetails(){
-        if(mUserLocation == null){
-            mUserLocation = new UserLocation();
-            DocumentReference userRef = mfirestore.collection("Backpacks")
-                    .document(FirebaseAuth.getInstance().getUid());
-
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        Log.d(TAG, "onComplete: successfully set the user client.");
-                        User user = task.getResult().toObject(User.class);
-                        mUserLocation.setUser(user);
-                        getLocation();
-                    }
-                }
-            });
-        }
-        else{
-            getLocation();
-        }
-    }
-
 
     //INTENET PERMISSION
     private boolean isConnected(){
