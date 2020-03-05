@@ -27,6 +27,16 @@
             android:shadowColor="#FF9800"
             android:text="Register Your Store" />
 
+        <Button
+            android:id="@+id/btn_book_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Book"
+            android:background="#1f1f1d"
+            android:textColor="#fff"
+            android:layout_gravity="bottom"
+            />
+
 
     </com.google.android.material.navigation.NavigationView>
 
@@ -54,6 +64,8 @@
             android:name="com.google.android.gms.maps.SupportMapFragment">
 
         </fragment>
+
+
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

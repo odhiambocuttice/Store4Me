@@ -12,11 +12,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +25,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -41,7 +46,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,26 +55,24 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+    Button mReequest;
 
     TextView name, email, mobile;
     String BackpackID;
     FirebaseAuth mAuth;
-    FirebaseFirestore mfirestore;
+//    FirebaseFirestore mfirestore;
 
     private GoogleMap mMap; //Map object
     private FusedLocationProviderClient mFusedLocationProviderClient; //Gets current location of user
@@ -84,9 +86,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private View mapView;
     private final float DEFAULT_ZOOM = 16.0f;
     private Marker mUserLocMarker;
+    private LatLng pickupLocation;
 
-    private UserLocation mUserLocation;
     private static final String TAG = "MainActivity";
+
+    private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
 
     @Override
@@ -104,16 +108,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         email = headerView.findViewById(R.id.useremail);
 
         mAuth = FirebaseAuth.getInstance();
-        mfirestore = FirebaseFirestore.getInstance();
+//        mfirestore = FirebaseFirestore.getInstance();
         BackpackID = mAuth.getCurrentUser().getUid();
-
-
 
         //Loading of the mapFragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mapView = mapFragment.getView();
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
 
         Places.initialize(MainActivity.this, "AIzaSyBSsito8De4lKFIzsynye7fSHgw54-d0Uk");
@@ -121,35 +122,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
 
-
-
-        DocumentReference documentReference = mfirestore.collection("Backpacks").document(BackpackID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-
-                if (documentSnapshot!=null){
-                    name.setText(documentSnapshot.getString("fName"));
-                    email.setText(documentSnapshot.getString("UserEmail"));
-                }
-
-
-
-            }
-        });
+//        DocumentReference documentReference = mfirestore.collection("Backpacks").document(BackpackID);
+//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+//
+//                if (documentSnapshot != null) {
+//                    name.setText(documentSnapshot.getString("fName"));
+//                    email.setText(documentSnapshot.getString("UserEmail"));
+//                }
+//
+//
+//            }
+//        });
         setSupportActionBar(toolbar);
-
         navigationView.bringToFront();
-
-        ActionBarDrawerToggle toggle =new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open,
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         navigationView.setNavigationItemSelectedListener(this);
 
         //GIVE INTERNET PERMISSION
-        if (!isConnected()){
+        if (!isConnected()) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Internet Connection Alert")
@@ -162,7 +157,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     })
                     .show();
         }
-          }
+
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -189,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         SettingsClient settingsClient = LocationServices.getSettingsClient(MainActivity.this);
         Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(builder.build());
-
         task.addOnSuccessListener(MainActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
@@ -200,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         task.addOnFailureListener(MainActivity.this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException){
+                if (e instanceof ResolvableApiException) {
                     ResolvableApiException resolvable = (ResolvableApiException) e;
                     try {
                         resolvable.startResolutionForResult(MainActivity.this, 51);
@@ -212,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         getLocation();
-
     }
 
     LocationRequest locationRequest;
@@ -223,13 +218,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(30 * 1000)
                 .setFastestInterval(5 * 1000);
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 //Location received
-                if (mUserLocMarker!=null) {
+                if (mUserLocMarker != null) {
                     mUserLocMarker.remove();
                 }
 
@@ -240,33 +234,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title("You"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-                // ------------ GET DATA -----------------
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("Backpacks")
-                        .document(FirebaseAuth.getInstance().getUid())
-                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                mReequest = (Button) findViewById(R.id.btn_book_store);
+                mReequest.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onClick(View v) {
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("requests");
+                        GeoFire geoFire = new GeoFire(ref);
+                        geoFire.setLocation(userId, new GeoLocation(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), new GeoFire.CompletionListener() {
+                            @Override
+                            public void onComplete(String key, DatabaseError error) {
+                                if (error != null) {
+                                    Toast.makeText(getApplicationContext(), "Can't go Active", Toast.LENGTH_SHORT).show();
+                                }
+                                Toast.makeText(getApplicationContext(), "You are Active", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-                        // --------------- SET DATA ------------------------
-                        DocumentSnapshot doc = task.getResult();
-                        DocumentReference locationRef = mfirestore.collection("User Location")
-                                .document(FirebaseAuth.getInstance().getUid());
-                        //Create Profile
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("latitude" ,mLastKnownLocation.getLatitude());
-                        user.put("longitude",mLastKnownLocation.getLongitude());
-                        user.put("fName",doc.get("fName"));
+                        pickupLocation = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                        mUserLocMarker = mMap.addMarker(new MarkerOptions()
+                                .position(pickupLocation)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.shopping))
+                                .title("Pickup Here"));
 
-
-                        if (mLastKnownLocation!=null) {
-                            locationRef.set(user);
-                        }
-
-                        //Toast.makeText(MainActivity.this, "" + task.getResult().getData().toString(), Toast.LENGTH_SHORT).show();
-
+                        mReequest.setText("Looking...");
+                        getClosestDriver();
                     }
                 });
+                // ------------ GET DATA -----------------
+//                FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                db.collection("Backpacks")
+//                        .document(FirebaseAuth.getInstance().getUid())
+//                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//
+//                        // --------------- SET DATA ------------------------
+//                        DocumentSnapshot doc = task.getResult();
+//                        DocumentReference locationRef = mfirestore.collection("User Location")
+//                                .document(FirebaseAuth.getInstance().getUid());
+//                        //Create Profile
+//                        Map<String, Object> user = new HashMap<>();
+//                        user.put("latitude", mLastKnownLocation.getLatitude());
+//                        user.put("longitude", mLastKnownLocation.getLongitude());
+//                        user.put("fName", doc.get("fName"));
+//
+//
+//                        if (mLastKnownLocation != null) {
+//                            locationRef.set(user);
+//                        }
+//
+//                        //Toast.makeText(MainActivity.this, "" + task.getResult().getData().toString(), Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+
             }
         };
 
@@ -279,8 +301,63 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private int radius = 1;
+    private Boolean driverFound = false;
+    private String driverFoundID;
+
+    GeoQuery geoQuery;
+
+    private void getClosestDriver() {
+        DatabaseReference storeLocation = FirebaseDatabase.getInstance().getReference().child("StoresAvailable");
+
+        GeoFire geoFire = new GeoFire(storeLocation);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+        geoQuery.removeAllListeners();
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                driverFound = true;
+                driverFoundID = key;
+
+                DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Stores").child(key);
+                String backpackId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                HashMap map = new HashMap();
+                map.put("customerRideId", backpackId);
+                mCustomerDatabase.updateChildren(map);
+
+            }
+
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if (!driverFound) {
+                    radius++;
+                    getClosestDriver();
+                }
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+    }
+
     //INTENET PERMISSION
-    private boolean isConnected(){
+    private boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
@@ -289,32 +366,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
 
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             onBackPressed();
         }
         super.onBackPressed();
     }
 
-    public void logout(View view){
+    public void logout(View view) {
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+        startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
         finish();
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-        switch (menuItem.getItemId()){
+        switch (menuItem.getItemId()) {
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
                 finish();
                 break;
         }
         return true;
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 
 
