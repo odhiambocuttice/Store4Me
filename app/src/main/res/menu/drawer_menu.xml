@@ -21,28 +21,12 @@
                     android:title="Call Us"
                     android:id="@+id/call_us"
                     android:icon="@drawable/ic_call"/>
-
-                <item
-                    android:title="Email Us"
-                    android:id="@+id/email_us"
-                    android:icon="@drawable/ic_email"/>
             </menu>
         </item>
-
-    </group>
-
-    <group android:checkableBehavior="single">
-        <item
-            android:title="" >
-
-            <menu>
-                <item
-                    android:title="Logout"
-                    android:id="@+id/logout"
-                    android:icon="@drawable/ic_signout"/>
-
-            </menu>
-        </item>
+            <item
+                android:title="Logout"
+                android:id="@+id/logout"
+                android:icon="@drawable/ic_signout"/>
 
 
     </group>

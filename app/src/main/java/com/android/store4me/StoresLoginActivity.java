@@ -50,14 +50,14 @@ public class StoresLoginActivity extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.password);
 
         mLogin = (Button) findViewById(R.id.login);
-        mRegistration = (Button) findViewById(R.id.registration);
-
-        mRegistration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
-            }
-        });
+//        mRegistration = (Button) findViewById(R.id.registration);
+//
+//        mRegistration.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
+//            }
+//        });
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override

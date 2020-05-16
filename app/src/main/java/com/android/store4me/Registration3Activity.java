@@ -26,9 +26,10 @@ public class Registration3Activity extends AppCompatActivity {
 
     private static final String TAG = "Registration3Activity";
 
-    private EditText mEmail, mPassword;
+    private EditText mEmail, mPassword, mUsername;
     TextView signIntext;
-    Button btnsignUp, mBackpack;
+    TextView mBackpack;
+    Button btnsignUp;
     ProgressDialog progressbar;
     public FirebaseAuth mAuth;
     public FirebaseFirestore mfirestore;
@@ -43,7 +44,7 @@ public class Registration3Activity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mfirestore = FirebaseFirestore.getInstance();
 
-//        name = findViewById(R.id.Namefield);
+        mUsername = findViewById(R.id.Namefield);
         mEmail = findViewById(R.id.input_email);
         mPassword = findViewById(R.id.input_password);
 
@@ -62,7 +63,7 @@ public class Registration3Activity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(Registration3Activity.this, DriverMapActivity.class);
+                    Intent intent = new Intent(Registration3Activity.this, Store_locationActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -73,8 +74,15 @@ public class Registration3Activity extends AppCompatActivity {
         btnsignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String shopname = mUsername.getText().toString();
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
+
+                if (TextUtils.isEmpty(shopname)) {
+                    mUsername.setError("Shop name is Required.");
+                    return;
+                }
+
                 if (TextUtils.isEmpty(email)) {
                     mEmail.setError("Email is Required.");
                     return;
@@ -99,8 +107,8 @@ public class Registration3Activity extends AppCompatActivity {
                         } else {
                             Toast.makeText(Registration3Activity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Stores").child(user_id).child("name");
-                            current_user_db.setValue(email);
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id).child("name");
+                            current_user_db.setValue(email, shopname);
 
                         }
                     }
@@ -113,11 +121,11 @@ public class Registration3Activity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), StoresLoginActivity.class));
             }
         });
-        mBackpack = (Button) findViewById(R.id.btn_backpack);
+        mBackpack = findViewById(R.id.btn_backpack);
         mBackpack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), RegistrationActivity.class));
+                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
             }
         });
 

@@ -10,12 +10,12 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -25,10 +25,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -55,12 +51,12 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
@@ -82,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location mLastKnownLocation; //Current location of user
     private LocationCallback locationCallback;  //Updating User's Location
 
-    private MaterialSearchBar materialSearchBar;
     private View mapView;
     private final float DEFAULT_ZOOM = 16.0f;
     private Marker mUserLocMarker;
@@ -108,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         email = headerView.findViewById(R.id.useremail);
 
         mAuth = FirebaseAuth.getInstance();
-//        mfirestore = FirebaseFirestore.getInstance();
         BackpackID = mAuth.getCurrentUser().getUid();
 
         //Loading of the mapFragment
@@ -121,20 +115,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placesClient = Places.createClient(this);
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-
-//        DocumentReference documentReference = mfirestore.collection("Backpacks").document(BackpackID);
-//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//
-//                if (documentSnapshot != null) {
-//                    name.setText(documentSnapshot.getString("fName"));
-//                    email.setText(documentSnapshot.getString("UserEmail"));
-//                }
-//
-//
-//            }
-//        });
         setSupportActionBar(toolbar);
         navigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open,
@@ -157,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     })
                     .show();
         }
-
 
     }
 
@@ -208,6 +187,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         getLocation();
+        String user_id = mAuth.getCurrentUser().getUid();
+
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                double latitu = (Double) dataSnapshot.child("Latitude").getValue();
+                double longitu = (Double) dataSnapshot.child("Longitude").getValue();
+
+                LatLng trainLocation = new LatLng(latitu, longitu);
+                mMap.addMarker(new MarkerOptions().position(trainLocation).title("Train: Muthu Kumari")).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trainLocation, 13f));
+//                Log.d("LatLon", latitu[0] + longitu[0] +"");
+//                Toast.makeText(DriverMapActivity.this, latitu[0].toString()+" - "+ longitu[0].toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Exception FB", databaseError.toException());
+            }
+        });
+
+
     }
 
     LocationRequest locationRequest;
@@ -233,34 +236,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                         .title("You"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-
-                mReequest = (Button) findViewById(R.id.btn_book_store);
-                mReequest.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("requests");
-                        GeoFire geoFire = new GeoFire(ref);
-                        geoFire.setLocation(userId, new GeoLocation(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), new GeoFire.CompletionListener() {
-                            @Override
-                            public void onComplete(String key, DatabaseError error) {
-                                if (error != null) {
-                                    Toast.makeText(getApplicationContext(), "Can't go Active", Toast.LENGTH_SHORT).show();
-                                }
-                                Toast.makeText(getApplicationContext(), "You are Active", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        pickupLocation = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                        mUserLocMarker = mMap.addMarker(new MarkerOptions()
-                                .position(pickupLocation)
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.shopping))
-                                .title("Pickup Here"));
-
-                        mReequest.setText("Looking...");
-                        getClosestDriver();
-                    }
-                });
                 // ------------ GET DATA -----------------
 //                FirebaseFirestore db = FirebaseFirestore.getInstance();
 //                db.collection("Backpacks")
@@ -301,61 +276,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private int radius = 1;
-    private Boolean driverFound = false;
-    private String driverFoundID;
-
-    GeoQuery geoQuery;
-
-    private void getClosestDriver() {
-        DatabaseReference storeLocation = FirebaseDatabase.getInstance().getReference().child("StoresAvailable");
-
-        GeoFire geoFire = new GeoFire(storeLocation);
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
-        geoQuery.removeAllListeners();
-
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                driverFound = true;
-                driverFoundID = key;
-
-                DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Stores").child(key);
-                String backpackId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                HashMap map = new HashMap();
-                map.put("customerRideId", backpackId);
-                mCustomerDatabase.updateChildren(map);
-
-            }
-
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                if (!driverFound) {
-                    radius++;
-                    getClosestDriver();
-                }
-
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-    }
-
     //INTENET PERMISSION
     private boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -392,11 +312,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return true;
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthListener);
     }
-
-
 }

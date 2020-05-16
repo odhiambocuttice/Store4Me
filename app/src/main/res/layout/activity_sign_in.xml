@@ -9,126 +9,126 @@
     android:orientation="vertical"
     tools:context=".SignInActivity">
 
-    <ImageView
-        android:id="@+id/logo_picture"
-        android:layout_width="81dp"
-        android:layout_height="108dp"
-        android:paddingBottom="10dp"
-        android:transitionName="logo_image"
-        android:src="@drawable/shelves" />
+  <ImageView
+      android:id="@+id/logo_picture"
+      android:layout_width="81dp"
+      android:layout_height="108dp"
+      android:paddingBottom="10dp"
+      android:transitionName="logo_image"
+      android:src="@drawable/shelves" />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="Sign In Here"/>
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="25sp"
+      android:text="Sign In Here"/>
 
 
-    <LinearLayout
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="20dp"
+      android:layout_marginTop="20dp"
+      android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
+        android:paddingBottom="20dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="Email">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Email">
+      <com.google.android.material.textfield.TextInputEditText
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/email_field"
+          android:inputType="textEmailAddress"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/email_field"
-                android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="Password"
+        android:paddingBottom="20dp"
+        app:passwordToggleEnabled="true">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Password"
-            android:paddingBottom="20dp"
-            app:passwordToggleEnabled="true">
+      <com.google.android.material.textfield.TextInputEditText
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:inputType="textPassword"
+          android:id="@id/passwordfield"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:id="@id/passwordfield"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/forgot_password"
-            android:textSize="15sp"
-            android:text="Forgot Password?"/>
-
-
-        <Button
-            android:id="@+id/signinbutton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_in"
-            android:background="#1f1f1d"
-            android:textColor="#fff"
-            />
-    </LinearLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Signup"
-        android:textSize="25sp"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:text="Create Account"/>
+        android:id="@+id/forgot_password"
+        android:textSize="15sp"
+        android:text="Forgot Password?"/>
+
+
+    <Button
+        android:id="@+id/signinbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:background="#1f1f1d"
+        android:textColor="#fff"
+        />
+  </LinearLayout>
+
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/Signup"
+      android:textSize="25sp"
+      android:textAlignment="center"
+      android:layout_gravity="center"
+      android:text="Create Account"/>
 
 
 
-<!--    <EditText-->
-<!--        android:id="@+id/emailfield"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="455dp"-->
-<!--        android:autofillHints=""-->
-<!--        android:ems="10"-->
-<!--        android:hint="@string/email"-->
-<!--        android:inputType="textEmailAddress"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        tools:targetApi="o" />-->
+  <!--    <EditText-->
+  <!--        android:id="@+id/emailfield"-->
+  <!--        android:layout_width="wrap_content"-->
+  <!--        android:layout_height="wrap_content"-->
+  <!--        android:layout_marginBottom="455dp"-->
+  <!--        android:autofillHints=""-->
+  <!--        android:ems="10"-->
+  <!--        android:hint="@string/email"-->
+  <!--        android:inputType="textEmailAddress"-->
+  <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+  <!--        app:layout_constraintEnd_toEndOf="parent"-->
+  <!--        app:layout_constraintStart_toStartOf="parent"-->
+  <!--        tools:targetApi="o" />-->
 
-<!--    <EditText-->
-<!--        android:id="@+id/passwordfield"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="345dp"-->
-<!--        android:autofillHints=""-->
-<!--        android:ems="10"-->
-<!--        android:inputType="textPassword"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        tools:targetApi="o" />-->
+  <!--    <EditText-->
+  <!--        android:id="@+id/passwordfield"-->
+  <!--        android:layout_width="wrap_content"-->
+  <!--        android:layout_height="wrap_content"-->
+  <!--        android:layout_marginBottom="345dp"-->
+  <!--        android:autofillHints=""-->
+  <!--        android:ems="10"-->
+  <!--        android:inputType="textPassword"-->
+  <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+  <!--        app:layout_constraintEnd_toEndOf="parent"-->
+  <!--        app:layout_constraintStart_toStartOf="parent"-->
+  <!--        tools:targetApi="o" />-->
 
 
 
-<!--    <TextView-->
-<!--        android:id="@+id/Signup"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Signup here"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/signinbutton" />-->
+  <!--    <TextView-->
+  <!--        android:id="@+id/Signup"-->
+  <!--        android:layout_width="wrap_content"-->
+  <!--        android:layout_height="wrap_content"-->
+  <!--        android:text="Signup here"-->
+  <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+  <!--        app:layout_constraintEnd_toEndOf="parent"-->
+  <!--        app:layout_constraintStart_toStartOf="parent"-->
+  <!--        app:layout_constraintTop_toBottomOf="@+id/signinbutton" />-->
 
 </androidx.appcompat.widget.LinearLayoutCompat>
