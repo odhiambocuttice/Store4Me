@@ -10,7 +10,7 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/colorPrimary"
+        android:background="#1f1f1d"
         android:orientation="horizontal">
 
         <ImageView
@@ -43,9 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
-            android:text="May I ask your phone number?"
+            android:text="Please Enter your Phone Number?"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="#1f1f1d" />
 
         <EditText
             android:id="@+id/editTextMobile"
@@ -56,7 +56,7 @@
             android:digits="0123456789"
             android:drawableLeft="@drawable/phone"
             android:drawablePadding="10dp"
-            android:hint="enter your mobile number"
+            android:hint="0704195820"
             android:inputType="phone"
             android:maxLength="10" />
 
@@ -67,10 +67,10 @@
             android:layout_below="@id/editTextMobile"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="#1f1f1d"
             android:text="Continue"
             android:textAllCaps="false"
-            android:textColor="#cdd8f1" />
+            android:textColor="#fff" />
 
     </RelativeLayout>
 

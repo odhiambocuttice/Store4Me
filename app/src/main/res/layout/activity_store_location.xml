@@ -50,6 +50,39 @@
             </LinearLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:layout_gravity="center"
+            android:background="#0000"
+            android:drawablePadding="16dp"
+            android:text="Welcome"
+            android:textSize="26sp" />
+
+
+        <TextView
+            android:id="@+id/txtEmailID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:background="#0000"
+            android:drawableStart="@drawable/ic_person"
+            android:drawablePadding="20dp"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"
