@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     markerStore = mMap.addMarker(markerOptions);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
-//                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
 
 //                    mMap.addMarker(new MarkerOptions().position(trainLocation).title(value)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.library));
 //                    mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
