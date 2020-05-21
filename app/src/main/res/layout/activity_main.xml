@@ -11,21 +11,23 @@
 
   <com.google.android.material.navigation.NavigationView
       android:id="@+id/navigation_view"
-      android:layout_width="match_parent"
+      android:layout_width="220dp"
       android:layout_height="match_parent"
       android:layout_gravity="start"
       app:headerLayout="@layout/nav_header"
       app:menu="@menu/drawer_menu">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="272dp"
+        android:id="@+id/buttonReg"
+        android:layout_width="181dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="40dp"
+        android:background="#1f1f1d"
         android:onClick="logout"
         android:shadowColor="#FF9800"
-        android:text="Register Your Store" />
+        android:text="Register Your Store"
+        android:textColor="#fff" />
 
 
   </com.google.android.material.navigation.NavigationView>

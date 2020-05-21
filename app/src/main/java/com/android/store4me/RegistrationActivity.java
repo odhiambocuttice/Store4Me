@@ -58,7 +58,7 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                    Intent intent = new Intent(RegistrationActivity.this, DriverMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -73,6 +73,11 @@ public class RegistrationActivity extends AppCompatActivity {
                 final String email = emailId.getText().toString();
                 String pwd = password.getText().toString();
                 final String fullname = name.getText().toString();
+
+                if(TextUtils.isEmpty(fullname)){
+                    name.setError("Username is Required.");
+                    return;
+                }
 
                 if(TextUtils.isEmpty(email)){
                     emailId.setError("Email is Required.");
@@ -99,12 +104,14 @@ public class RegistrationActivity extends AppCompatActivity {
                         }else{
                             Toast.makeText(RegistrationActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Backpacks").child(user_id).child("name");
-                            current_user_db.setValue(email);
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Backpacks").child(user_id);
+                            current_user_db.child("Email").setValue(email);
+                            current_user_db.child("Name").setValue( fullname);
 
                         }
                     }
                 });
+
 //                mAuth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 //                    @Override
 //                    public void onComplete(@NonNull Task<AuthResult> task) {

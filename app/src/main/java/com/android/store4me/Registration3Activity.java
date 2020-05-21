@@ -114,8 +114,11 @@ public class Registration3Activity extends AppCompatActivity {
                         } else {
                             Toast.makeText(Registration3Activity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id).child("name");
-                            current_user_db.setValue(email, shopname);
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+//                            current_user_db.setValue(email, shopname);
+                            current_user_db.child("name").setValue(email);
+                            current_user_db.child("Shopname").setValue( shopname);
+
 
                         }
                     }

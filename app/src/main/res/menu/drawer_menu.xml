@@ -7,28 +7,34 @@
         <item
             android:id="@+id/credit_card"
             android:icon="@drawable/ic_credit"
-            android:title="Payment" />
+            android:title="Profile" />
 
 
     </group>
 
     <group android:checkableBehavior="single">
-        <item
-            android:title="Need Help?" >
+        <item android:title="Need Help?">
 
             <menu>
                 <item
-                    android:title="Call Us"
                     android:id="@+id/call_us"
-                    android:icon="@drawable/ic_call"/>
+                    android:icon="@drawable/ic_call"
+                    android:title="Call Us" />
             </menu>
         </item>
-            <item
-                android:title="Logout"
-                android:id="@+id/logout"
-                android:icon="@drawable/ic_signout"/>
 
 
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item android:title="Logins">
+        <menu >
+        <item
+            android:id="@+id/mlogout"
+            android:icon="@drawable/ic_signout"
+            android:title="Logout" />
+        </menu>
+    </item>
     </group>
 
 

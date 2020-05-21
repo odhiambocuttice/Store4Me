@@ -36,6 +36,8 @@ public class SignInActivity extends AppCompatActivity {
         signIntext = findViewById(R.id.Signup);
         btnLoginIn = findViewById(R.id.signinbutton);
 
+
+
         mAuthlistener = new FirebaseAuth.AuthStateListener() {
 
 
@@ -43,9 +45,9 @@ public class SignInActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser mfirebaseUser = mAuth.getCurrentUser();
                 if ( mfirebaseUser != null){
-                    Toast.makeText(SignInActivity.this, "Logged in!!", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(SignInActivity.this, MainActivity.class);
                     startActivity(i);
+                    Toast.makeText(SignInActivity.this, "Logged in!!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(SignInActivity.this, "Please Log in!!", Toast.LENGTH_SHORT).show();
