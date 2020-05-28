@@ -89,8 +89,7 @@ public class Store_locationActivity extends AppCompatActivity {
 
 //        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Set the fields to specify which types of place data to
-// return after the user has made a selection.
+
         final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
 
         mAuth = FirebaseAuth.getInstance();
