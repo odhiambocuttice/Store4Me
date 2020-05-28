@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SplashView extends AppCompatActivity {
 
-    private static int SPLASHCREEN = 3000;
+    private static int SPLASHCREEN = 2000;
 
     public FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthlistener;

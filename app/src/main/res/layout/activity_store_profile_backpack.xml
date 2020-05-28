@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context=".StoreProfileActivity">
+    tools:context=".StoreProfileBackpackActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -110,7 +110,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="210dp"
                 android:layout_height="wrap_content"
                 android:hint="Contact Info"
                 android:paddingLeft="20dp">
@@ -125,22 +125,22 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-<!--            <Button-->
-<!--                android:id="@+id/call_button"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="#1f1f1d"-->
-<!--                android:text="Call "-->
-<!--                android:textColor="#fff" />-->
+            <Button
+                android:id="@+id/call_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#1f1f1d"
+                android:text="Call "
+                android:textColor="#fff" />
         </LinearLayout>
 
-<!--        <Button-->
-<!--            android:id="@+id/request_button"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="#1f1f1d"-->
-<!--            android:text="Request"-->
-<!--            android:textColor="#fff" />-->
+        <Button
+            android:id="@+id/request_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#1f1f1d"
+            android:text="Request"
+            android:textColor="#fff" />
 
 
     </LinearLayout>

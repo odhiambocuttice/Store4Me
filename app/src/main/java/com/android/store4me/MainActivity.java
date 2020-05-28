@@ -62,9 +62,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -230,28 +232,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    double latitu = (Double) ds.child("Latitude").getValue();
-                    double longitu = (Double) ds.child("Longitude").getValue();
+                if (dataSnapshot.exists()) {
+                    collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
 
-                    String value = (String) ds.child("Shopname").getValue();
 
-                    LatLng trainLocation = new LatLng(latitu, longitu);
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(trainLocation);
-                    markerOptions.title(value);
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.library));
+                } else {
+                    Toast.makeText(MainActivity.this, "Add new location to view on map", Toast.LENGTH_LONG).show();
 
-                    markerStore = mMap.addMarker(markerOptions);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
-
-//                    mMap.addMarker(new MarkerOptions().position(trainLocation).title(value)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.library));
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
-//                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trainLocation, 13f));
-//                Log.d("LatLon", latitu[0] + longitu[0] +"");
-//                Toast.makeText(DriverMapActivity.this, latitu[0].toString()+" - "+ longitu[0].toString(), Toast.LENGTH_SHORT).show();
                 }
+//                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                    if (ds.exists()) {
+//                        double latitu = (Double) ds.child("Latitude").getValue();
+//                        double longitu = (Double) ds.child("Longitude").getValue();
+//                        final String user_id = (String) ds.child("UserID").getValue();
+//                        String value = (String) ds.child("Shopname").getValue();
+//
+//                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+//                            @Override
+//                            public void onInfoWindowClick(Marker marker) {
+//                                Intent intent = new Intent(MainActivity.this, StoreProfileActivity.class);
+//                                intent.putExtra("user_id", user_id);
+//                                startActivity(intent);
+//
+//                            }
+//                        });
+//
+//                        LatLng trainLocation = new LatLng(latitu, longitu);
+//                        MarkerOptions markerOptions = new MarkerOptions();
+//                        markerOptions.position(trainLocation);
+//                        markerOptions.title(value);
+//                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.library));
+//
+//                        markerStore = mMap.addMarker(markerOptions);
+//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
+////                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
+//
+////                    mMap.addMarker(new MarkerOptions().position(trainLocation).title(value)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.library));
+////                    mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
+////                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trainLocation, 13f));
+////                Log.d("LatLon", latitu[0] + longitu[0] +"");
+////                Toast.makeText(DriverMapActivity.this, latitu[0].toString()+" - "+ longitu[0].toString(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
             }
 
             @Override
@@ -260,6 +282,66 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+
+    }
+
+    private String user_id;
+
+    private void collectPhoneNumbers(Map<String, Object> users) {
+
+//        int size = (int) dataSnapshot.getChildrenCount(); //
+//        Marker[] allMarkers = new Marker[size];
+//        Marker mm;
+
+        ArrayList<Double> phoneNumbers = new ArrayList<>();
+        ArrayList<Double> latitude = new ArrayList<>();
+        double lat, lng;
+        String desc;
+
+        //iterate through each user, ignoring their UID
+        for (Map.Entry<String, Object> entry : users.entrySet()) {
+
+            //Get user map
+            Map singleUser = (Map) entry.getValue();
+            //Get phone field and append to list
+            phoneNumbers.add((Double) singleUser.get("Longitude"));
+            latitude.add((Double) singleUser.get("Latitude"));
+            lat = (double) singleUser.get("Latitude");
+            lng = (double) singleUser.get("Longitude");
+            desc = (String) singleUser.get("PlaceName");
+            user_id = (String) singleUser.get("UserID");
+            String value = (String) singleUser.get("Shopname");
+            LatLng latLng = new LatLng(lat, lng);
+
+            //  mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
+            //Toast.makeText(getContext(), ""+ latLng  , Toast.LENGTH_SHORT).show();
+            if (mMap != null) {
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
+                        .position(new LatLng(lat, lng))
+                        .snippet(value)
+                        .title(user_id));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,6));
+                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+                        double lat = marker.getPosition().latitude;
+                        double lng = marker.getPosition().longitude;
+
+                        Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
+                        intent.putExtra("user_id", marker.getTitle());
+                        startActivity(intent);
+                    }
+                });
+            }
+//            mMap.addMarker(new MarkerOptions()
+//                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).position(latLng).title("Farm"));
+
+        }
+
+        //System.out.println(phoneNumbers.toString());
+        //Toast.makeText(getContext(), phoneNumbers.toString(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -276,8 +358,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(60000);
+        mLocationRequest.setFastestInterval(60000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -428,8 +510,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (menuItem.getItemId()) {
             case R.id.mlogout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                 finish();
+                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                 break;
             case R.id.call_us:
                 Intent intent = new Intent(Intent.ACTION_DIAL);

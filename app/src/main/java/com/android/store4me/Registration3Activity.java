@@ -73,7 +73,7 @@ public class Registration3Activity extends AppCompatActivity {
                     Intent intent = new Intent(Registration3Activity.this, Store_locationActivity.class);
                     startActivity(intent);
                     finish();
-                    return;
+
                 }
             }
         };

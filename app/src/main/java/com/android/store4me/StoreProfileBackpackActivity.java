@@ -5,12 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,29 +22,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class StoreProfileActivity extends AppCompatActivity {
-
-    EditText editText;
+public class StoreProfileBackpackActivity extends AppCompatActivity {
 
     String BackpackID;
     FirebaseAuth mAuth;
+
     private DatabaseReference mUserDatabase;
-    private String userID, placeName;
-    private ProgressBar loading;
-    //    private FirebaseUser user;
-    private ImageView imgAddVenue;
-    private Uri resultUri;
     private String key, user_id;
-    Button call_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );
-        setContentView(R.layout.activity_store_profile);
+        setContentView(R.layout.activity_store_profile_backpack);
 
         user_id = getIntent().getStringExtra("user_id");
 
@@ -61,15 +47,6 @@ public class StoreProfileActivity extends AppCompatActivity {
         final ImageView fetchedProfilePicValue = (ImageView) findViewById(R.id.profile_picture);
         final Button fetchedPhoneValue = findViewById(R.id.call_button);
 
-//        fetchedPhoneValue.setVisibility(View.GONE);
-//        if(user_id != null)
-//            fetchedPhoneValue.setVisibility(View.VISIBLE);
-//
-////        resetButton.setVisibility(View.VISIBLE);
-
-
-        //String user_id = mAuth.getCurrentUser().getUid();
-
 
         final Button fetchedBackpackValue = findViewById(R.id.request_button);
 
@@ -77,14 +54,11 @@ public class StoreProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(StoreProfileActivity.this, RequestActivity.class);
+                Intent intent = new Intent(StoreProfileBackpackActivity.this, RequestActivity.class);
                 intent.putExtra("user_id", user_id);
                 startActivity(intent);
-                finish();
             }
         });
-
-
 
         if (user_id != null) {
 
@@ -103,7 +77,6 @@ public class StoreProfileActivity extends AppCompatActivity {
                     String StoreDesc = (String) dataSnapshot.child("Description").getValue();
                     fetchedTextDescriptionValue.setText(StoreDesc);
                     final String PhoneNumber2 = (String) dataSnapshot.child("PhoneNumber").getValue();
-//                    fetchedPhoneValue.setText(PhoneNumber2);
 
 
                     fetchedPhoneValue.setOnClickListener(new View.OnClickListener() {
@@ -116,53 +89,25 @@ public class StoreProfileActivity extends AppCompatActivity {
                         }
                     });
 
-//                    fetchedTextPhone.setText(PhoneNumberBtn);
-
-                    Glide.with(StoreProfileActivity.this).load(dataSnapshot.child("venueImageUrl").getValue()).
+                    Glide.with(StoreProfileBackpackActivity.this).load(dataSnapshot.child("venueImageUrl").getValue()).
                             into(fetchedProfilePicValue);
 
-//                String latitu = (String) dataSnapshot.child("Latitude").getValue();
-//                String longitu = (String) dataSnapshot.child("Longitude").getValue();
-
-                    ;
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.w("Exception FB", databaseError.toException());
-                    Toast.makeText(StoreProfileActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+
 
                 }
             });
 
         }
-
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Stores").child("venueImageUrl");
         key = mUserDatabase.getKey();
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
         final StorageReference imgRef = mStorageRef.child("venue_images").child(key);
         final long ONE_MEGABYTE = 1024 * 1024;
-
-//        mImageRef.getBytes(ONE_MEGABYTE)
-//                .addOnSuccessListener(new onSuccessListener<byte[]>() {
-//                    @Override
-//                    public void onSuccess(byte[] bytes) {
-//                        Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                        DisplayMetrics dm = new DisplayMetrics();
-//                        getWindowManager().getDefaultDisplay().getMetrics(dm);
-//
-//                        fetchedProfilePicValue.setMinimumHeight(dm.heightPixels);
-//                        fetchedProfilePicValue.setMinimumWidth(dm.widthPixels);
-//                        fetchedProfilePicValue.setImageBitmap(bm);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//            }
-//        });
-
     }
-
 }
