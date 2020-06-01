@@ -71,9 +71,10 @@ public class SplashView extends AppCompatActivity {
                             finish();
                         }
                     }, SPLASHCREEN);
-
                 }
+
             }
+
         };
 
 

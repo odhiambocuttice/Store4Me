@@ -196,8 +196,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("Exception FB", databaseError.toException());
-                Toast.makeText(MainActivity.this, "Error fetching data", Toast.LENGTH_LONG).show();
-
             }
         });
 

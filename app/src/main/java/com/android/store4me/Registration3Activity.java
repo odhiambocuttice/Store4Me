@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class Registration3Activity extends AppCompatActivity {
 
@@ -115,9 +116,11 @@ public class Registration3Activity extends AppCompatActivity {
                             Toast.makeText(Registration3Activity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             String user_id = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
-//                            current_user_db.setValue(email, shopname);
                             current_user_db.child("name").setValue(email);
                             current_user_db.child("Shopname").setValue( shopname);
+
+                            String token = FirebaseInstanceId.getInstance().getToken();
+                            current_user_db.child("notificationTokens").child(token).setValue(true);
 
 
                         }

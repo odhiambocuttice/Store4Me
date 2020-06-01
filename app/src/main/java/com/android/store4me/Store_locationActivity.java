@@ -111,17 +111,18 @@ public class Store_locationActivity extends AppCompatActivity {
 
         final TextView mTxtEmail = findViewById(R.id.txtEmailID);
 
-        String user_id = mAuth.getCurrentUser().getUid();
+//        String user_id = mAuth.getCurrentUser().getUid();
 
-        if (user_id != null) {
+        if (userID != null) {
 
 
             Intent intent = new Intent(Store_locationActivity.this, StoreProfileActivity.class);
-            intent.putExtra("user_id", user_id);
+            intent.putExtra("user_id", userID);
             startActivity(intent);
             finish();
 
-            DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+            DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(userID);
+            myRef.keepSynced(true);
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -132,7 +133,7 @@ public class Store_locationActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.w("Exception FB", databaseError.toException());
-                    Toast.makeText(Store_locationActivity.this, "Error fetching data", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(Store_locationActivity.this, "Error fetching data", Toast.LENGTH_LONG).show();
 
                 }
             });

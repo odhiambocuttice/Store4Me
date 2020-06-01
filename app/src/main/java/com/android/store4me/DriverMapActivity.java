@@ -10,7 +10,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,11 +38,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -138,30 +133,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             mMap.setMyLocationEnabled(true);
         }
 
-        final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Stores");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    double latitu = (Double) ds.child("Latitude").getValue();
-                    double longitu = (Double) ds.child("Longitude").getValue();
-
-                    String value = (String) ds.child("PlaceName").getValue();
-
-                    LatLng trainLocation = new LatLng(latitu, longitu);
-                    mMap.addMarker(new MarkerOptions().position(trainLocation).title(value)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.library));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(trainLocation));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trainLocation, 13f));
-//                Log.d("LatLon", latitu[0] + longitu[0] +"");
-//                Toast.makeText(DriverMapActivity.this, latitu[0].toString()+" - "+ longitu[0].toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("Exception FB", databaseError.toException());
-            }
-        });
     }
 
     protected synchronized void buildGoogleApiClient() {

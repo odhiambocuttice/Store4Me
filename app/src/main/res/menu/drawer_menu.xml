@@ -7,7 +7,7 @@
         <item
             android:id="@+id/credit_card"
             android:icon="@drawable/ic_credit"
-            android:title="Profile" />
+            android:title="My Requests" />
 
 
     </group>

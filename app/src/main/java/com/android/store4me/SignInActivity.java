@@ -1,5 +1,6 @@
 package com.android.store4me;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class SignInActivity extends AppCompatActivity {
     TextInputEditText emailId;
@@ -24,6 +28,7 @@ public class SignInActivity extends AppCompatActivity {
     Button btnLoginIn;
     TextView signIntext;
     public FirebaseAuth mAuth;
+    ProgressDialog progressbar;
     private FirebaseAuth.AuthStateListener mAuthlistener;
 
     @Override
@@ -35,6 +40,8 @@ public class SignInActivity extends AppCompatActivity {
         password = findViewById(R.id.passwordfield);
         signIntext = findViewById(R.id.Signup);
         btnLoginIn = findViewById(R.id.signinbutton);
+
+        progressbar = new ProgressDialog(this);
 
 
 
@@ -49,9 +56,9 @@ public class SignInActivity extends AppCompatActivity {
                     startActivity(i);
                     Toast.makeText(SignInActivity.this, "Logged in!!", Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    Toast.makeText(SignInActivity.this, "Please Log in!!", Toast.LENGTH_SHORT).show();
-                }
+//                else {
+//                    Toast.makeText(SignInActivity.this, "Please Log in!!", Toast.LENGTH_SHORT).show();
+//                }
 
             }
         };
@@ -75,6 +82,7 @@ public class SignInActivity extends AppCompatActivity {
 
                 }
                 else if (!(pwd.isEmpty() && email.isEmpty())){
+
                     mAuth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -82,8 +90,17 @@ public class SignInActivity extends AppCompatActivity {
                                 Toast.makeText(SignInActivity.this,"Incorrect Email or Password", Toast.LENGTH_SHORT).show();
                             }
                             else {
+                                progressbar.setMessage("Login User");
+                                progressbar.show();
+
                                 Intent intToHome = new Intent(SignInActivity.this, MainActivity.class);
                                 startActivity(intToHome);
+
+                                String user_id = mAuth.getCurrentUser().getUid();
+                                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Backpacks").child(user_id);
+//
+                                String token = FirebaseInstanceId.getInstance().getToken();
+                                current_user_db.child("notificationTokens").child(token).setValue(true);
                             }
                         }
                     });
@@ -107,5 +124,11 @@ public class SignInActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthlistener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(mAuthlistener);
     }
 }

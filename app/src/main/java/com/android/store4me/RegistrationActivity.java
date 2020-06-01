@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -107,6 +108,10 @@ public class RegistrationActivity extends AppCompatActivity {
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Backpacks").child(user_id);
                             current_user_db.child("Email").setValue(email);
                             current_user_db.child("Name").setValue( fullname);
+
+//
+                            String token = FirebaseInstanceId.getInstance().getToken();
+                            current_user_db.child("notificationTokens").child(token).setValue(true);
 
                         }
                     }

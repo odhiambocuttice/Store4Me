@@ -13,6 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <ProgressBar
+            android:id="@+id/loadingAddLoc"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/logo_picture"
             android:layout_width="81dp"
@@ -97,7 +105,7 @@
             android:paddingBottom="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/placeName"
+                android:id="@+id/BackpackDetails"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:textColor="#1f1f1d" />

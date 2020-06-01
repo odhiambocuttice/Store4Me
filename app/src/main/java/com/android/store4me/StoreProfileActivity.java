@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -43,10 +44,7 @@ public class StoreProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );
+
         setContentView(R.layout.activity_store_profile);
 
         user_id = getIntent().getStringExtra("user_id");
@@ -71,14 +69,14 @@ public class StoreProfileActivity extends AppCompatActivity {
         //String user_id = mAuth.getCurrentUser().getUid();
 
 
-        final Button fetchedBackpackValue = findViewById(R.id.request_button);
+        final Button fetchedBackpackValue = findViewById(R.id.btnEdit);
 
         fetchedBackpackValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(StoreProfileActivity.this, RequestActivity.class);
-                intent.putExtra("user_id", user_id);
+                Intent intent = new Intent(StoreProfileActivity.this, Store_locationActivity.class);
+//                intent.putExtra("user_id", user_id);
                 startActivity(intent);
                 finish();
             }
@@ -94,7 +92,7 @@ public class StoreProfileActivity extends AppCompatActivity {
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(final DataSnapshot dataSnapshot) {
-                    String value = (String) dataSnapshot.child("PlaceName").getValue();
+                    String value = (String) dataSnapshot.child("Shopname").getValue();
                     fetchedText.setText(value);
                     final String PhoneNumber = (String) dataSnapshot.child("PhoneNumber").getValue();
                     fetchedTextPhone.setText(PhoneNumber);
@@ -105,16 +103,16 @@ public class StoreProfileActivity extends AppCompatActivity {
                     final String PhoneNumber2 = (String) dataSnapshot.child("PhoneNumber").getValue();
 //                    fetchedPhoneValue.setText(PhoneNumber2);
 
-
-                    fetchedPhoneValue.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Intent.ACTION_DIAL);
-                            intent.setData(Uri.parse("tel:" + PhoneNumber2));
-                            startActivity(intent);
-
-                        }
-                    });
+//
+//                    fetchedPhoneValue.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            Intent intent = new Intent(Intent.ACTION_DIAL);
+//                            intent.setData(Uri.parse("tel:" + PhoneNumber2));
+//                            startActivity(intent);
+//
+//                        }
+//                    });
 
 //                    fetchedTextPhone.setText(PhoneNumberBtn);
 
@@ -130,7 +128,6 @@ public class StoreProfileActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Log.w("Exception FB", databaseError.toException());
-                    Toast.makeText(StoreProfileActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -165,4 +162,31 @@ public class StoreProfileActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.threedots_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.mlogout:
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                startActivity(new Intent(getApplicationContext(), StoresLoginActivity.class));
+                break;
+            case R.id.mcall:
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:+254704195820"));
+                startActivity(intent);
+                break;
+            case R.id.mLocation:
+                startActivity(new Intent(getApplicationContext(), DriverMapActivity.class));
+                break;
+        }
+        return true;
+    }
 }

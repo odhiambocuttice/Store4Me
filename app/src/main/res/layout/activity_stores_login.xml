@@ -70,13 +70,23 @@
 
   </LinearLayout>
 
-<!--  <TextView-->
-<!--      android:layout_width="wrap_content"-->
-<!--      android:layout_height="wrap_content"-->
-<!--      android:textSize="14sp"-->
-<!--      android:textAlignment="center"-->
-<!--      android:paddingTop="14dp"-->
-<!--      android:text="No Account? Please Register"/>-->
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/registration"
+      android:textSize="14sp"
+      android:textAlignment="center"
+      android:paddingTop="14dp"
+      android:textColor="#000"
+      android:text="No Account? Please Register"/>
+
+  <ProgressBar
+      android:id="@+id/progressBar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="120dp"
+      android:visibility="invisible" />
 
 <!--  <Button-->
 <!--      android:id="@+id/registration"-->
