@@ -68,7 +68,7 @@ public class StoreProfileBackpackActivity extends AppCompatActivity {
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(final DataSnapshot dataSnapshot) {
-                    String value = (String) dataSnapshot.child("PlaceName").getValue();
+                    String value = (String) dataSnapshot.child("Shopname").getValue();
                     fetchedText.setText(value);
                     final String PhoneNumber = (String) dataSnapshot.child("PhoneNumber").getValue();
                     fetchedTextPhone.setText(PhoneNumber);

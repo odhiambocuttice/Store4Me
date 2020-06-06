@@ -26,6 +26,7 @@ public class StoresLoginActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button mLogin;
     TextView mRegistration;
+    String user_id;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
@@ -38,16 +39,19 @@ public class StoresLoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
+
+
         progressbar = new ProgressDialog(this);
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(StoresLoginActivity.this, Store_locationActivity.class);
+                    user_id = mAuth.getCurrentUser().getUid();
+                    Intent intent = new Intent(StoresLoginActivity.this, StoreProfileActivity.class);
+                    intent.putExtra("user_id", user_id);
                     startActivity(intent);
                     finish();
-                    return;
                 }
             }
         };
@@ -98,7 +102,9 @@ public class StoresLoginActivity extends AppCompatActivity {
                                 progressbar.show();
 
                                 Intent intToHome = new Intent(StoresLoginActivity.this, StoreProfileActivity.class);
+                                intToHome.putExtra("user_id", user_id);
                                 startActivity(intToHome);
+                                finish();
 
                                 String user_id = mAuth.getCurrentUser().getUid();
                                 DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);

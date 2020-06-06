@@ -113,13 +113,14 @@ public class Store_locationActivity extends AppCompatActivity {
 
 //        String user_id = mAuth.getCurrentUser().getUid();
 
-        if (userID != null) {
-
-
-            Intent intent = new Intent(Store_locationActivity.this, StoreProfileActivity.class);
-            intent.putExtra("user_id", userID);
-            startActivity(intent);
-            finish();
+//        if (mTxtSearchLoc != null) {
+//
+//
+//            Intent intent = new Intent(Store_locationActivity.this, StoreProfileActivity.class);
+////          intent.putExtra("user_id", mTxtSearchLoc);
+//            startActivity(intent);
+//            finish();
+//        }
 
             DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(userID);
             myRef.keepSynced(true);
@@ -166,7 +167,7 @@ public class Store_locationActivity extends AppCompatActivity {
                     save_venue();
                 }
             });
-        }
+
     }
 
 
@@ -248,6 +249,7 @@ public class Store_locationActivity extends AppCompatActivity {
                             Intent intent = new Intent(Store_locationActivity.this, StoreProfileActivity.class);
                             intent.putExtra("user_id", userID);
                             startActivity(intent);
+                            finish();
 
 
                             // Toast.makeText(AddVenueActivity.this,

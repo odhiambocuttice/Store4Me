@@ -98,9 +98,9 @@ public class RequestActivity extends AppCompatActivity {
                     mUserDatabase.child("BackPackContents").setValue(details);
                     mUserDatabase.child("StoreName").setValue(user_id);
 
-                    DatabaseReference UserDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
+                    DatabaseReference NotificationDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
-                    UserDatabase.child(user_id).child(BackpackID).setValue(true);
+                    NotificationDatabase.child(user_id).child(BackpackID).setValue(true);
 
                     Toast.makeText(RequestActivity.this, "Request Sent", Toast.LENGTH_SHORT).show();
                     mMessage.setText("");
