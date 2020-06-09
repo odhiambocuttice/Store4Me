@@ -32,6 +32,10 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,6 +44,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -60,6 +65,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -68,7 +74,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
@@ -106,10 +112,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
 
-    private PlacesClient mPlacesClient ;
+    private PlacesClient mPlacesClient;
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
+
+    Marker mCurrLocationMarker;
 
 
     @Override
@@ -223,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // COMMENTED OUT UNTIL WE DEFINE THE METHOD
                 // Present the current place picker
-                 pickCurrentPlace();
+                pickCurrentPlace();
                 return true;
 
             default:
@@ -245,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
+            getDeviceLocation();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -273,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(1.2921,  36.8219);
+        LatLng sydney = new LatLng(1.2921, 36.8219);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(6));
 
@@ -284,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
 
-        getDeviceLocation();
+//        getDeviceLocation();
 
         //
         // PASTE THE LINES BELOW THIS COMMENT
@@ -378,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             // COMMENTED OUT UNTIL WE DEFINE THE METHOD
                             // Populate the ListView
-                             fillPlacesList();
+                            fillPlacesList();
                         } else {
                             Exception exception = task.getException();
                             if (exception instanceof ApiException) {
@@ -402,24 +411,84 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
+
+                            if (mCurrLocationMarker != null) {
+                                mCurrLocationMarker.remove();
+                            }
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = location;
                             Log.d(TAG, "Latitude: " + mLastKnownLocation.getLatitude());
                             Log.d(TAG, "Longitude: " + mLastKnownLocation.getLongitude());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-//                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-//
-//                            mCurrLocationMarker = mMap.addMarker(markerOptions);
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-//                            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
-                            mMap.addMarker(new MarkerOptions()
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))      // Sets the center of the map to location user
+                                    .zoom(17)                   // Sets the zoom
+                                    .bearing(90)                // Sets the orientation of the camera to east
+                                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                                    .build();                   // Creates a CameraPosition from the builder
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                            mCurrLocationMarker =    mMap.addMarker(new MarkerOptions()
                                     .title("YOU")
                                     .position(  new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+
+                            //Getting Location Query
+                            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("geofire");
+                            GeoFire geoFire = new GeoFire(ref);
+
+                            GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(mLastKnownLocation.getLatitude(),
+                                    mLastKnownLocation.getLongitude()), 3);
+                            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                                @Override
+                                public void onKeyEntered(String key, GeoLocation location) {
+                                    //Any location key which is within 3km from the user's location will show up here as the key parameter in this method
+                                    //You can fetch the actual data for this location by creating another firebase query here
+
+                                    DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference().child("Stores").child(key);
+                                    Query locationDataQuery = ref2;
+                                    locationDataQuery.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                            if (dataSnapshot.exists()) {
+                                                collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
+
+
+                                            }
+                                            //The dataSnapshot should hold the actual data about the location
+//                                            dataSnapshot.getChild("name").getValue(String.class); //should return the name of the location and dataSnapshot.getChild("description").getValue(String.class); //should return the description of the locations
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onKeyExited(String key) {
+                                }
+
+                                @Override
+                                public void onKeyMoved(String key, GeoLocation location) {
+                                }
+
+                                @Override
+                                public void onGeoQueryReady() {
+                                    //This method will be called when all the locations which are within 3km from the user's location has been loaded Now you can do what you wish with this data
+                                }
+
+                                @Override
+                                public void onGeoQueryError(DatabaseError error) {
+
+                                }
+                            });
 
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -444,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (mLocationPermissionGranted) {
             getDeviceLocation();
+//            getDriversAround();
         } else {
             // The user has not granted permission.
             Log.i(TAG, "The user did not grant location permission.");

@@ -15,9 +15,10 @@
 
         <ProgressBar
             android:id="@+id/loadingAddLoc"
+
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:indeterminate="true"
             android:visibility="gone" />
 
@@ -118,6 +119,15 @@
             android:layout_height="match_parent"
             android:background="#1f1f1d"
             android:text="Finish Your Request"
+            android:textColor="#fff"
+            android:paddingBottom="20dp"/>
+
+        <Button
+            android:id="@+id/call_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#1f1f1d"
+            android:text="Call "
             android:textColor="#fff" />
 
     </LinearLayout>

@@ -1,6 +1,7 @@
 package com.android.store4me;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,8 +10,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -76,6 +80,9 @@ public class RequestActivity extends AppCompatActivity {
             }
         });
 
+        final Button fetchedPhoneValue = findViewById(R.id.call_button);
+        fetchedPhoneValue.setVisibility(View.INVISIBLE);
+
         final Button Fin = findViewById(R.id.finish_request_button);
         final TextInputEditText mMessage = findViewById(R.id.BackpackDetails);
         Fin.setOnClickListener(new View.OnClickListener() {
@@ -100,15 +107,53 @@ public class RequestActivity extends AppCompatActivity {
 
                     DatabaseReference NotificationDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
-                    NotificationDatabase.child(user_id).child(BackpackID).setValue(true);
+                    NotificationDatabase.child(user_id).child(BackpackID).setValue(true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(RequestActivity.this, "Request Sent", Toast.LENGTH_SHORT).show();
+                                    fetchedPhoneValue.setVisibility(View.VISIBLE);
 
-                    Toast.makeText(RequestActivity.this, "Request Sent", Toast.LENGTH_SHORT).show();
-                    mMessage.setText("");
-                    loading.setVisibility(View.GONE);
+                                    mMessage.setVisibility(View.GONE);
+                                    loading.setVisibility(View.GONE);
+                                    Fin.setText("Request Sent");
+                                    Fin.setEnabled(false);
 
-                    Intent intent = new Intent(RequestActivity.this, StoreProfileBackpackActivity.class);
-                    intent.putExtra("user_id", user_id);
-                    startActivity(intent);
+                                    final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+                                    myRef.keepSynced(true);
+                                    myRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                                            final String PhoneNumber2 = (String) dataSnapshot.child("PhoneNumber").getValue();
+
+
+                                            fetchedPhoneValue.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                                                    intent.setData(Uri.parse("tel:" + PhoneNumber2));
+                                                    startActivity(intent);
+
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.w("Exception FB", databaseError.toException());
+
+
+                                        }
+                                    });
+
+                                }
+                            });
+
+
+
+//                    Intent intent = new Intent(RequestActivity.this, StoreProfileBackpackActivity.class);
+//                    intent.putExtra("user_id", user_id);
+//                    startActivity(intent);
 //                    finish();
                 }
             }

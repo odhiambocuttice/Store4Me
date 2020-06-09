@@ -9,70 +9,81 @@
     tools:context=".MainActivity"
     tools:openDrawer="start">
 
-  <com.google.android.material.navigation.NavigationView
-      android:id="@+id/navigation_view"
-      android:layout_width="220dp"
-      android:layout_height="match_parent"
-      android:layout_gravity="start"
-      app:headerLayout="@layout/nav_header"
-      app:menu="@menu/drawer_menu">
-
-    <Button
-        android:id="@+id/buttonReg"
-        android:layout_width="181dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp"
-        android:background="#1f1f1d"
-        android:onClick="logout"
-        android:shadowColor="#FF9800"
-        android:text="Register Your Store"
-        android:textColor="#fff" />
-
-
-  </com.google.android.material.navigation.NavigationView>
-
-
-
-  <androidx.appcompat.widget.LinearLayoutCompat
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:elevation="4dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="220dp"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu">
+
+        <Button
+            android:id="@+id/buttonReg"
+            android:layout_width="181dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="40dp"
+            android:background="#1f1f1d"
+            android:onClick="logout"
+            android:shadowColor="#FF9800"
+            android:text="Register Your Store"
+            android:textColor="#fff" />
 
 
-      <fragment
-          android:layout_width="match_parent"
-          android:layout_height="450dp"
-          android:id="@+id/map"
-          android:name="com.google.android.gms.maps.SupportMapFragment">
-
-      </fragment>
-
-      <ListView
-          android:id="@+id/listPlaces"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-
-      </ListView>
-    </LinearLayout>
+    </com.google.android.material.navigation.NavigationView>
 
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-  </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="420dp">
+
+            </fragment>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#FFFFFF"
+                android:drawableStart="@drawable/ic_store_black_24dp"
+                android:textAlignment="center"
+                android:drawablePadding="20dp"
+                android:padding="16dp"
+                android:text="INTERESTS NEARBY"
+                android:textColor="#000"
+                android:textSize="16sp" />
+
+            <ListView
+                android:id="@+id/listPlaces"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </ListView>
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.drawerlayout.widget.DrawerLayout>

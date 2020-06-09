@@ -26,15 +26,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".RequestFromBackpackActivity">
-             <intent-filter>
-             <action android:name="android.intent.action.MAIN_notification" />
 
-
-             <category android:name="android.intent.category.DEFAULT" />
-             </intent-filter>
         </activity>
         <activity android:name=".StoreProfileBackpackActivity" />
-        <activity android:name=".RequestActivity" />
+        <activity android:name=".RequestActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="MapsView"/>
         <activity android:name=".StoreProfileActivity" />
         <activity android:name=".VerifyPhoneActivity" />
         <activity android:name=".RequestPhoneNumberActivity">
@@ -64,7 +61,13 @@
 <!--             <category android:name="android.intent.category.LAUNCHER" />-->
 <!--             </intent-filter>-->
         </activity>
-        <activity android:name=".DriverMapActivity" />
+        <activity android:name=".DriverMapActivity">
+<!--                    <intent-filter>-->
+<!--                        <action android:name="android.intent.action.MAIN" />-->
+
+<!--                        <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                    </intent-filter>-->
+        </activity>
         <activity android:name=".Registration3Activity">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -80,17 +83,10 @@
              <intent-filter>
              <action android:name="android.intent.action.MAIN" />
 
-
              <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
         </activity>
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -104,7 +100,6 @@
             android:name=".MainActivity"
             android:theme="@style/AppTheme.Main" />
 
-        <service android:name=".RequestFromBackpackActivity" />
     </application>
 
 </manifest>

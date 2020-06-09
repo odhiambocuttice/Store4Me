@@ -213,6 +213,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
+
+
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
     }
