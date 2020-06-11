@@ -183,9 +183,9 @@ public class StoreProfileActivity extends AppCompatActivity {
                 intent.setData(Uri.parse("tel:+254704195820"));
                 startActivity(intent);
                 break;
-            case R.id.mLocation:
-                startActivity(new Intent(getApplicationContext(), DriverMapActivity.class));
-                break;
+//            case R.id.mLocation:
+//                startActivity(new Intent(getApplicationContext(), DriverMapActivity.class));
+//                break;
         }
         return true;
     }

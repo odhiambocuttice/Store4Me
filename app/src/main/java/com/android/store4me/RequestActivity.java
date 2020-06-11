@@ -79,6 +79,7 @@ public class RequestActivity extends AppCompatActivity {
 
             }
         });
+        final Button findDirection = findViewById(R.id.direction_button);
 
         final Button fetchedPhoneValue = findViewById(R.id.call_button);
         fetchedPhoneValue.setVisibility(View.INVISIBLE);
@@ -146,6 +147,35 @@ public class RequestActivity extends AppCompatActivity {
                                         }
                                     });
 
+                                    final DatabaseReference SelectedStore = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+                                    SelectedStore.keepSynced(true);
+                                    SelectedStore.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                                            final String PhoneNumber2 = (String) dataSnapshot.child("PhoneNumber").getValue();
+
+
+                                            findDirection.setVisibility(View.VISIBLE);
+
+                                            findDirection.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(RequestActivity.this, DriverMapActivity.class);
+                                                    intent.putExtra("user_id", user_id);
+                                                    startActivity(intent);
+                                                    finish();
+
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.w("Exception FB", databaseError.toException());
+
+
+                                        }
+                                    });
                                 }
                             });
 

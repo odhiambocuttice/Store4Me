@@ -8,19 +8,20 @@
     android:padding="20dp"
     tools:context=".RequestActivity">
 
+    <ProgressBar
+        android:id="@+id/loadingAddLoc"
+
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/loadingAddLoc"
-
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:indeterminate="true"
-            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/logo_picture"
@@ -31,33 +32,33 @@
             android:transitionName="logo_image" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="#0000"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:text="Backpack Details of"
-            android:textSize="28sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="#0000"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:text="Backpack Details of"
+                android:textSize="28sp" />
 
-        <TextView
-            android:id="@+id/txtBackpackNameID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="#0000"
-            android:drawableStart="@drawable/user"
-            android:drawablePadding="20dp"
-            android:padding="16dp"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/txtBackpackNameID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="#0000"
+                android:drawableStart="@drawable/user"
+                android:drawablePadding="20dp"
+                android:padding="16dp"
+                android:textSize="16sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -118,9 +119,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#1f1f1d"
+            android:paddingBottom="20dp"
             android:text="Finish Your Request"
-            android:textColor="#fff"
-            android:paddingBottom="20dp"/>
+            android:textColor="#fff" />
 
         <Button
             android:id="@+id/call_button"
@@ -130,6 +131,25 @@
             android:text="Call "
             android:textColor="#fff" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp">
+
+
+        <Button
+            android:id="@+id/direction_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:text="Find Direction"
+            android:textColor="#000"
+            android:visibility="invisible" />
     </LinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

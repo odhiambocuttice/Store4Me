@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -65,12 +67,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -116,6 +119,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
+
+    private Boolean StoreFound = false;
+    private String StoreFoundID;
+    private int radius = 3;
 
     Marker mCurrLocationMarker;
 
@@ -425,63 +432,68 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))      // Sets the center of the map to location user
-                                    .zoom(17)                   // Sets the zoom
+                                    .zoom(15)                   // Sets the zoom
                                     .bearing(90)                // Sets the orientation of the camera to east
                                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                                     .build();                   // Creates a CameraPosition from the builder
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                            mCurrLocationMarker =    mMap.addMarker(new MarkerOptions()
-                                    .title("YOU")
-                                    .position(  new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()))
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+                            Geocoder geocoder = new Geocoder(getApplicationContext(),
+                                    Locale.getDefault());
+                            try {
+                                List<Address> listAddresses = geocoder.getFromLocation(mLastKnownLocation.getLatitude(),
+                                        mLastKnownLocation.getLongitude(), 1);
+                                if (null != listAddresses && listAddresses.size() > 0) {
+                                    String state = listAddresses.get(0).getAdminArea();
+                                    String country = listAddresses.get(0).getCountryName();
+                                    String subLocality = listAddresses.get(0).getSubLocality();
+
+                                    mCurrLocationMarker = mMap.addMarker(new MarkerOptions()
+                                            .title("YOU ")
+                                            .snippet(subLocality + "," + state)
+                                            .position(new LatLng(mLastKnownLocation.getLatitude(),
+                                                    mLastKnownLocation.getLongitude()))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
 
                             //Getting Location Query
-                            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("geofire");
+
+                            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Stores");
                             GeoFire geoFire = new GeoFire(ref);
 
                             GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude()), 3);
+                                    mLastKnownLocation.getLongitude()), radius);
                             geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                                 @Override
                                 public void onKeyEntered(String key, GeoLocation location) {
-                                    //Any location key which is within 3km from the user's location will show up here as the key parameter in this method
-                                    //You can fetch the actual data for this location by creating another firebase query here
+                                    if (!StoreFound)
+                                        StoreFound = true;
+                                    StoreFoundID = key;
 
-                                    DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference().child("Stores").child(key);
-                                    Query locationDataQuery = ref2;
-                                    locationDataQuery.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                            if (dataSnapshot.exists()) {
-                                                collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
-
-
-                                            }
-                                            //The dataSnapshot should hold the actual data about the location
-//                                            dataSnapshot.getChild("name").getValue(String.class); //should return the name of the location and dataSnapshot.getChild("description").getValue(String.class); //should return the description of the locations
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
                                 }
 
                                 @Override
                                 public void onKeyExited(String key) {
+
                                 }
 
                                 @Override
                                 public void onKeyMoved(String key, GeoLocation location) {
+
                                 }
 
                                 @Override
                                 public void onGeoQueryReady() {
-                                    //This method will be called when all the locations which are within 3km from the user's location has been loaded Now you can do what you wish with this data
+                                    if (!StoreFound) {
+                                        radius++;
+                                    }
+
+
                                 }
 
                                 @Override
@@ -489,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 }
                             });
+
 
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -593,16 +606,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             String value = (String) singleUser.get("Shopname");
             LatLng latLng = new LatLng(lat, lng);
 
-            //  mMap.animateCamera(CameraUpdateFactory.zoomTo(13f));
-            //Toast.makeText(getContext(), ""+ latLng  , Toast.LENGTH_SHORT).show();
+
+            Location location1 = new Location("");
+            location1.setLatitude(mLastKnownLocation.getLatitude());
+            location1.setLongitude(mLastKnownLocation.getLongitude());
+
+            Location location2 = new Location("");
+            location2.setLatitude(lat);
+            location2.setLongitude(lng);
+
+            float distance = (float) location1.distanceTo(location2) / 1000;
+            double roundOff = (double) Math.round(distance * 100) / 100;
+
+//            Toast.makeText(this, ""+ String.valueOf(roundOff)  , Toast.LENGTH_LONG).show();
             if (mMap != null) {
                 mMap.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
                         .position(new LatLng(lat, lng))
-                        .snippet(value)
-                        .title(user_id));
-                //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,6));
+                        .title(value + "is\b" + String.valueOf(roundOff) + "Km away")
+                        .snippet(user_id));
+
                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
@@ -610,8 +633,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double lng = marker.getPosition().longitude;
 
                         Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
-                        intent.putExtra("user_id", marker.getTitle());
+                        intent.putExtra("user_id", marker.getSnippet());
                         startActivity(intent);
+
+
                     }
                 });
             }
@@ -644,12 +669,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onBackPressed();
     }
 
-    public void logout(View view) {
-        FirebaseAuth.getInstance().signOut();
-        mAuth.removeAuthStateListener(firebaseAuthListener);
-        startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
-        finish();
-    }
+//    public void logout(View view) {
+//        FirebaseAuth.getInstance().signOut();
+//        mAuth.removeAuthStateListener(firebaseAuthListener);
+//        startActivity(new Intent(getApplicationContext(), Registration3Activity.class));
+//        finish();
+//    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
