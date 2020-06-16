@@ -705,6 +705,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 intent.setData(Uri.parse("tel:+254704195820"));
                 startActivity(intent);
                 break;
+            case R.id.credit_card:
+                startActivity(new Intent(getApplicationContext(), AllRequestBackPackActivity.class));
+                break;
         }
         return true;
     }

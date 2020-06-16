@@ -5,6 +5,22 @@ public class StoreRequests_FromBackpacks {
     String BackPackContents;
     String BackpackOwner;
     String Name;
+    String Shopname;
+
+    public String getShopname() {
+        return Shopname;
+    }
+
+    public void setShopname(String shopname) {
+        Shopname = shopname;
+    }
+
+    public StoreRequests_FromBackpacks(String backPackContents, String backpackOwner, String name, String shopname) {
+        BackPackContents = backPackContents;
+        BackpackOwner = backpackOwner;
+        Name = name;
+        Shopname = shopname;
+    }
 
     public String getName() {
         return Name;

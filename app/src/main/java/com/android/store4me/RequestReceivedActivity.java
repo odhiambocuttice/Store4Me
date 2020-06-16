@@ -25,6 +25,7 @@ public class RequestReceivedActivity extends AppCompatActivity {
         String MessFrom = getIntent().getStringExtra("from_id");
 
         mRequest = (TextView) findViewById(R.id.BackpackDetails);
+        mBackpackID = (TextView) findViewById(R.id.txtBackpackNameID);
 
         mRequest.setText("FROM :" + Messmessage);
         mBackpackID.setText(MessFrom);
