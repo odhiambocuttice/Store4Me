@@ -1,5 +1,6 @@
 package com.android.store4me;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,8 +39,11 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.firebase.geofire.GeoFire;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -291,8 +295,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         // Prompt the user for permission.
         getLocationPermission();
 
-
         //Displaying markers from DB
+        DisplayStoreMarkers();
+
+    }
+
+    private ValueEventListener displayStoreListener;
+
+    public void DisplayStoreMarkers() {
+
 
         final DatabaseReference mDb = FirebaseDatabase.getInstance().getReference().child("Stores")
                 .child(user_id);
@@ -303,12 +314,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 String Shopname = dataSnapshot.child("Shopname").getValue(String.class);
                 double latt = dataSnapshot.child("Latitude").getValue(Double.class);
                 double lngg = dataSnapshot.child("Longitude").getValue(Double.class);
-                LatLng storeLatLng  = new LatLng(latt, lngg);
-                 mMap.addMarker(new MarkerOptions().position(new LatLng(latt, lngg)).title(Shopname)
+                LatLng storeLatLng = new LatLng(latt, lngg);
+                mMap.addMarker(new MarkerOptions().position(new LatLng(latt, lngg)).title(Shopname)
                         .snippet(name)
-                      .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf)));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf)));
 
-                getRouteToMarker (storeLatLng);
+                getRouteToMarker(storeLatLng);
 
 
             }
@@ -322,12 +333,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void getRouteToMarker(LatLng storeLatLng) {
-        if (storeLatLng != null && mLastKnownLocation != null){
+        if (storeLatLng != null && mLastKnownLocation != null) {
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.WALKING)
                     .withListener(this)
                     .alternativeRoutes(true)
-                    .waypoints( storeLatLng,
+                    .waypoints(storeLatLng,
                             new LatLng(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude()))
                     .build();
@@ -477,7 +488,6 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
 
-
     private void pickCurrentPlace() {
         if (mMap == null) {
             return;
@@ -589,9 +599,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onRoutingFailure(RouteException e) {
-        if(e != null) {
+        if (e != null) {
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }else {
+        } else {
             Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
         }
 
@@ -603,9 +613,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int  shortestRouteIndex) {
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
 
-        if(polylines.size()>0) {
+        if (polylines.size() > 0) {
             for (Polyline poly : polylines) {
                 poly.remove();
             }
@@ -613,7 +623,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         polylines = new ArrayList<>();
         //add route(s) to the map.
-        for (int i = 0; i <route.size(); i++) {
+        for (int i = 0; i < route.size(); i++) {
 
             //In case of more than 5 alternative routes
             int colorIndex = i % COLORS.length;
@@ -625,7 +635,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
 
-            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Route " + (i + 1) + ": distance - " + route.get(i).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
         }
 
 
@@ -633,6 +643,31 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onRoutingCancelled() {
+
+    }
+
+    private GoogleApiClient mGoogleApiClient;
+
+    private void displayLocation() {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        } else {
+
+            mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
+    }
+
+    private void disconnectStore() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (LocationListener) this);
+        String user_id = mAuth.getCurrentUser().getUid();
+
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
+
+        GeoFire geoFire = new GeoFire(myRef);
+        geoFire.removeLocation(user_id);
 
     }
 }

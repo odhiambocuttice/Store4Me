@@ -8,6 +8,15 @@
         <item name="colorAccent">#1f1f1d</item>
     </style>
 
+    <style name="AppTheme.Requests" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#1f1f1d</item>
+        <item name="colorPrimaryDark">#1f1f1d</item>
+        <item name="colorAccent">#1f1f1d</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.NoActionBar" >
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>

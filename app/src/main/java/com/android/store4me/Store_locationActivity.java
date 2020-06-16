@@ -122,51 +122,51 @@ public class Store_locationActivity extends AppCompatActivity {
 //            finish();
 //        }
 
-            DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(userID);
-            myRef.keepSynced(true);
-            myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    String value = (String) dataSnapshot.child("name").getValue();
-                    mTxtEmail.setText(value);
-                }
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("Stores").child(userID);
+        myRef.keepSynced(true);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = (String) dataSnapshot.child("name").getValue();
+                mTxtEmail.setText(value);
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w("Exception FB", databaseError.toException());
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Exception FB", databaseError.toException());
 //                    Toast.makeText(Store_locationActivity.this, "Error fetching data", Toast.LENGTH_LONG).show();
 
-                }
-            });
+            }
+        });
 
-            mTxtSearchLoc.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        mTxtSearchLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    // Start the autocomplete intent.
-                    Intent intent = new Autocomplete.IntentBuilder(
-                            AutocompleteActivityMode.OVERLAY, fields)
-                            .setCountry("KE")
-                            .build(Store_locationActivity.this);
-                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+                // Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.OVERLAY, fields)
+                        .setCountry("KE")
+                        .build(Store_locationActivity.this);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
 
-                }
-            });
+            }
+        });
 
-            imgAddVenue.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkPermissions();
-                }
-            });
+        imgAddVenue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPermissions();
+            }
+        });
 
-            mBtnSaveLoc.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        mBtnSaveLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    save_venue();
-                }
-            });
+                save_venue();
+            }
+        });
 
     }
 
@@ -186,19 +186,19 @@ public class Store_locationActivity extends AppCompatActivity {
         } else if (desc.isEmpty()) {
             loading.setVisibility(View.GONE);
             Toast.makeText(this, "Enter Description", Toast.LENGTH_SHORT).show();
-        }  else if (desc.length() < 30 ) {
-            mEdtFarrmDesc.setError("The Store's Description must be 30 characters");
+        } else if (desc.length() < 12) {
+            mEdtFarrmDesc.setError("The Store's Description must be 15 characters");
             return;
-        }   else if (price.isEmpty()) {
+        } else if (price.isEmpty()) {
             loading.setVisibility(View.GONE);
             Toast.makeText(this, "Enter Venue Price", Toast.LENGTH_SHORT).show();
-        }else if (phone_number.isEmpty()) {
+        } else if (phone_number.isEmpty()) {
             loading.setVisibility(View.GONE);
             Toast.makeText(this, "Enter Your Contact Number", Toast.LENGTH_SHORT).show();
-        }else if (phone_number.length() < 10) {
+        } else if (phone_number.length() != 10) {
             mEdtVenueSpace.setError("Phone Number Must be = 10 digits");
             return;
-        }else if (resultUri == null) {
+        } else if (resultUri == null) {
             loading.setVisibility(View.GONE);
             Toast.makeText(this, "Add Venue Image", Toast.LENGTH_SHORT).show();
         } else if (placeName.isEmpty()) {
@@ -242,6 +242,7 @@ public class Store_locationActivity extends AppCompatActivity {
                             mUserDatabase.child("Price").setValue(price);
                             mUserDatabase.child("PhoneNumber").setValue(phone_number);
                             mUserDatabase.child("Description").setValue(desc);
+                            mUserDatabase.child("Status").setValue("Offline");
 
                             Toast.makeText(Store_locationActivity.this, "Setup Complete", Toast.LENGTH_SHORT).show();
                             loading.setVisibility(View.GONE);

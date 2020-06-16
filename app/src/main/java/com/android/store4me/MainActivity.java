@@ -122,9 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Boolean StoreFound = false;
     private String StoreFoundID;
-    private int radius = 3;
+    private int radius = 1;
 
     Marker mCurrLocationMarker;
+
+    String Status, desc;
 
 
     @Override
@@ -322,7 +324,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
+                        collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
+
 
 
                 } else {
@@ -463,6 +466,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             //Getting Location Query
 
+                            final List<Marker> markerList = new ArrayList<Marker>();
                             final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Stores");
                             GeoFire geoFire = new GeoFire(ref);
 
@@ -471,14 +475,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                                 @Override
                                 public void onKeyEntered(String key, GeoLocation location) {
-                                    if (!StoreFound)
-                                        StoreFound = true;
-                                    StoreFoundID = key;
+                                    for (Marker markerIt : markerList) {
+                                        if (markerIt.getTag().equals(key))
+                                            return;
+                                    }
+                                    LatLng ref = new LatLng(location.latitude, location.longitude);
 
                                 }
 
                                 @Override
                                 public void onKeyExited(String key) {
+                                    for (Marker markerIt : markerList) {
+                                        if (markerIt.getTag().equals(key))
+                                            markerIt.remove();
+                                        markerList.remove(markerIt);
+                                        return;
+                                    }
 
                                 }
 
@@ -489,10 +501,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 @Override
                                 public void onGeoQueryReady() {
-                                    if (!StoreFound) {
-                                        radius++;
-                                    }
-
+//                                    if (!StoreFound) {
+//                                        radius++;
+//                                    }
 
                                 }
 
@@ -589,66 +600,70 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ArrayList<Double> phoneNumbers = new ArrayList<>();
         ArrayList<Double> latitude = new ArrayList<>();
         double lat, lng;
-        String desc;
 
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : users.entrySet()) {
 
-            //Get user map
-            Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
-            phoneNumbers.add((Double) singleUser.get("Longitude"));
-            latitude.add((Double) singleUser.get("Latitude"));
-            lat = (double) singleUser.get("Latitude");
-            lng = (double) singleUser.get("Longitude");
-            desc = (String) singleUser.get("PlaceName");
-            user_id = (String) singleUser.get("UserID");
-            String value = (String) singleUser.get("Shopname");
-            LatLng latLng = new LatLng(lat, lng);
 
 
-            Location location1 = new Location("");
-            location1.setLatitude(mLastKnownLocation.getLatitude());
-            location1.setLongitude(mLastKnownLocation.getLongitude());
+                //Get user map
+                Map singleUser = (Map) entry.getValue();
+                //Get phone field and append to list
+                phoneNumbers.add((Double) singleUser.get("Longitude"));
+                latitude.add((Double) singleUser.get("Latitude"));
+                lat = (double) singleUser.get("Latitude");
+                lng = (double) singleUser.get("Longitude");
+                desc = (String) singleUser.get("PlaceName");
+                Status = (String) singleUser.get("Status");
+                user_id = (String) singleUser.get("UserID");
+                String value = (String) singleUser.get("Shopname");
+                LatLng latLng = new LatLng(lat, lng);
 
-            Location location2 = new Location("");
-            location2.setLatitude(lat);
-            location2.setLongitude(lng);
 
-            float distance = (float) location1.distanceTo(location2) / 1000;
-            double roundOff = (double) Math.round(distance * 100) / 100;
+                Location location1 = new Location("");
+                location1.setLatitude(mLastKnownLocation.getLatitude());
+                location1.setLongitude(mLastKnownLocation.getLongitude());
+
+                Location location2 = new Location("");
+                location2.setLatitude(lat);
+                location2.setLongitude(lng);
+
+                float distance = (float) location1.distanceTo(location2) / 1000;
+                double roundOff = (double) Math.round(distance * 100) / 100;
+
+            if (Status.equals("Online")|| Status.equals("")) {
 
 //            Toast.makeText(this, ""+ String.valueOf(roundOff)  , Toast.LENGTH_LONG).show();
-            if (mMap != null) {
-                mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
-                        .position(new LatLng(lat, lng))
-                        .title(value + "is\b" + String.valueOf(roundOff) + "Km away")
-                        .snippet(user_id));
+                if (mMap != null) {
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
+                            .position(new LatLng(lat, lng))
+                            .title(value + "is\b" + String.valueOf(roundOff) + "Km away")
+                            .snippet(user_id));
 
-                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-                        double lat = marker.getPosition().latitude;
-                        double lng = marker.getPosition().longitude;
+                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            double lat = marker.getPosition().latitude;
+                            double lng = marker.getPosition().longitude;
 
-                        Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
-                        intent.putExtra("user_id", marker.getSnippet());
-                        startActivity(intent);
+                            Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
+                            intent.putExtra("user_id", marker.getSnippet());
+                            startActivity(intent);
 
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 //            mMap.addMarker(new MarkerOptions()
 //                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).position(latLng).title("Farm"));
 
+            }
+
+            //System.out.println(phoneNumbers.toString());
+            //Toast.makeText(getContext(), phoneNumbers.toString(), Toast.LENGTH_SHORT).show();
         }
-
-        //System.out.println(phoneNumbers.toString());
-        //Toast.makeText(getContext(), phoneNumbers.toString(), Toast.LENGTH_SHORT).show();
-
-    }
 
 
     //INTENET PERMISSION

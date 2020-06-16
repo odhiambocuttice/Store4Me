@@ -27,6 +27,7 @@ public class RequestActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressBar loading;
     String user_id, BackpackID;
+    String value3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class RequestActivity extends AppCompatActivity {
         Ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String value3 = (String) dataSnapshot.child("Name").getValue();
+                value3 = (String) dataSnapshot.child("Name").getValue();
                 fetchedTextBackpackValue.setText(value3);
             }
 
@@ -98,13 +99,14 @@ public class RequestActivity extends AppCompatActivity {
                     Toast.makeText(RequestActivity.this, "Enter Your Backpack Contents", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    DatabaseReference mUserDatabase = FirebaseDatabase.getInstance().getReference().child("BackpackRequest").push();
+                    DatabaseReference mUserDatabase = FirebaseDatabase.getInstance().getReference()
+                            .child("BackpackRequest").child(user_id).push();
 
 
 
                     mUserDatabase.child("BackpackOwner").setValue(BackpackID);
                     mUserDatabase.child("BackPackContents").setValue(details);
-                    mUserDatabase.child("StoreName").setValue(user_id);
+                    mUserDatabase.child("Name").setValue(value3);
 
                     DatabaseReference NotificationDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
