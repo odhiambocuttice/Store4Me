@@ -21,15 +21,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".AllRequestBackPackActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".StoreBackpackOption"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AllRequestBackPackActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Requests">
+        <intent-filter>
+            <action android:name="com.android.store4me.TARGET_REQUEST" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
         </activity>
-
         <activity
             android:name=".AllRequestsActivity"
             android:parentActivityName=".StoreProfileActivity"
             android:theme="@style/AppTheme.Requests" />
-        <activity android:name=".RequestReceivedActivity" />
+        <activity android:name=".RequestReceivedActivity">
+            <intent-filter>
+                <action android:name="com.android.store4me.TARGET_REQUEST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -45,28 +58,30 @@
         <activity android:name=".StoreMapActivity" />
         <activity android:name=".DemoActivity">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
+<!--             <intent-filter> -->
+<!--             <action android:name="android.intent.action.MAIN" /> -->
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--             </intent-filter> -->
         </activity>
         <activity android:name=".StoreProfileBackpackActivity" />
         <activity
             android:name=".RequestActivity"
-            android:label="MapsView"
+            android:label="           Request"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".StoreProfileActivity" />
         <activity android:name=".VerifyPhoneActivity" />
         <activity android:name=".RequestPhoneNumberActivity" />
         <activity android:name=".Store_locationActivity" />
         <activity android:name=".StoresLoginActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".DriverMapActivity"
@@ -76,13 +91,11 @@
         <activity
             android:name=".SplashView"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-             <intent-filter>
-             <action android:name="android.intent.action.MAIN" />
-
-
-             <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <service

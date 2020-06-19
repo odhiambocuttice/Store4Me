@@ -57,6 +57,7 @@ public class StoreProfileBackpackActivity extends AppCompatActivity {
                 Intent intent = new Intent(StoreProfileBackpackActivity.this, RequestActivity.class);
                 intent.putExtra("user_id", user_id);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -110,4 +111,6 @@ public class StoreProfileBackpackActivity extends AppCompatActivity {
         final StorageReference imgRef = mStorageRef.child("venue_images").child(key);
         final long ONE_MEGABYTE = 1024 * 1024;
     }
+
+
 }

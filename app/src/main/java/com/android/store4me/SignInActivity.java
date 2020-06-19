@@ -54,11 +54,9 @@ public class SignInActivity extends AppCompatActivity {
                 if ( mfirebaseUser != null){
                     Intent i = new Intent(SignInActivity.this, MainActivity.class);
                     startActivity(i);
-                    Toast.makeText(SignInActivity.this, "Logged in!!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
-//                else {
-//                    Toast.makeText(SignInActivity.this, "Please Log in!!", Toast.LENGTH_SHORT).show();
-//                }
+
 
             }
         };
@@ -83,13 +81,11 @@ public class SignInActivity extends AppCompatActivity {
                 }
                 else if (!(pwd.isEmpty() && email.isEmpty())){
 
+
                     mAuth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(!task.isSuccessful()){
-                                Toast.makeText(SignInActivity.this,"Incorrect Email or Password", Toast.LENGTH_SHORT).show();
-                            }
-                            else {
+                            if(task.isSuccessful()){
                                 progressbar.setMessage("Login User");
                                 progressbar.show();
 
@@ -98,9 +94,14 @@ public class SignInActivity extends AppCompatActivity {
 
                                 String user_id = mAuth.getCurrentUser().getUid();
                                 DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Backpacks").child(user_id);
-//
+
                                 String token = FirebaseInstanceId.getInstance().getToken();
                                 current_user_db.child("notificationTokens").child(token).setValue(true);
+
+                            }
+                            else {
+                                Toast.makeText(SignInActivity.this,"Incorrect Email or Password", Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     });
@@ -130,5 +131,11 @@ public class SignInActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(mAuthlistener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

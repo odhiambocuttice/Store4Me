@@ -37,7 +37,7 @@ public class AllRequestBackPackActivity extends AppCompatActivity {
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
 
-        getSupportActionBar().setTitle("All Requests");
+        getSupportActionBar().setTitle("My Requests");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         user_id = getIntent().getStringExtra("user_id");
@@ -90,8 +90,8 @@ public class AllRequestBackPackActivity extends AppCompatActivity {
 //            }
 //        });
 
-        mRequestReference = FirebaseDatabase.getInstance().getReference().child("BackpackRequest")
-        .child("iLtTMaekweMDGPo9SrWdWhR3eDd2");
+        mRequestReference = FirebaseDatabase.getInstance().getReference().child("BackpackRequest2")
+        .child(BackPackID);
         mRequestReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -31,7 +31,7 @@ public class AllRequestsActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     String user_id;
-
+    String Messmessage, MessFrom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,10 @@ public class AllRequestsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user_id = mAuth.getCurrentUser().getUid();
 
+
+        Messmessage = getIntent().getStringExtra("message");
+        MessFrom = getIntent().getStringExtra("from_id");
+
         mRequestList = (ListView) findViewById(R.id.all_requests);
         final ArrayList<String> list = new ArrayList<>();
         final ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.store_request_list, list);
@@ -57,7 +61,9 @@ public class AllRequestsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(AllRequestsActivity.this, RequestReceivedActivity.class);
-                intent.putExtra("user_id", user_id);
+//                intent.putExtra("user_id", user_id);
+                intent.putExtra("message", Messmessage);
+                intent.putExtra("from_id", MessFrom);
                 startActivity(intent);
 
             }
@@ -72,12 +78,12 @@ public class AllRequestsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 list.clear();
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     StoreRequests_FromBackpacks storeRequests_fromBackpacks =
                             snapshot.getValue(StoreRequests_FromBackpacks.class);
                     String backpackOwner = storeRequests_fromBackpacks.getBackpackOwner();
                     String contents = storeRequests_fromBackpacks.getBackPackContents();
-                    String  name = storeRequests_fromBackpacks.getName();
+                    String name = storeRequests_fromBackpacks.getName();
                     list.add("From : " + name + "\n" + "Contents :" + contents);
                 }
                 adapter.notifyDataSetChanged();

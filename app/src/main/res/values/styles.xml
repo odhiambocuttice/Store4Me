@@ -27,4 +27,11 @@
 
     </style>
 
-</resources>
+<style name="CheckBoxTheme">
+    <item name="colorAccent">@color/colorChecked</item>
+    <item name="colorControlNormal">@color/colorUnChecked</item>
+
+</style>
+
+
+    </resources>

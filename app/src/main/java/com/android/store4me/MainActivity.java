@@ -237,15 +237,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_geolocate:
-
-                // COMMENTED OUT UNTIL WE DEFINE THE METHOD
-                // Present the current place picker
                 pickCurrentPlace();
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -324,8 +319,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                        collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
-
+                    collectPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
 
 
                 } else {
@@ -435,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))      // Sets the center of the map to location user
-                                    .zoom(15)                   // Sets the zoom
+                                    .zoom(14)                   // Sets the zoom
                                     .bearing(90)                // Sets the orientation of the camera to east
                                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                                     .build();                   // Creates a CameraPosition from the builder
@@ -501,9 +495,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 @Override
                                 public void onGeoQueryReady() {
-//                                    if (!StoreFound) {
-//                                        radius++;
-//                                    }
+                                    if (!StoreFound) {
+                                        radius++;
+                                    }
 
                                 }
 
@@ -591,79 +585,100 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private String user_id;
 
-    private void collectPhoneNumbers(Map<String, Object> users) {
+    private void collectPhoneNumbers(final Map<String, Object> users) {
 
 //        int size = (int) dataSnapshot.getChildrenCount(); //
 //        Marker[] allMarkers = new Marker[size];
 //        Marker mm;
 
-        ArrayList<Double> phoneNumbers = new ArrayList<>();
-        ArrayList<Double> latitude = new ArrayList<>();
-        double lat, lng;
-
-        //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : users.entrySet()) {
+        final ArrayList<Double> phoneNumbers = new ArrayList<>();
+        final ArrayList<Double> latitude = new ArrayList<>();
+//        double lat, lng;
 
 
 
-                //Get user map
-                Map singleUser = (Map) entry.getValue();
-                //Get phone field and append to list
-                phoneNumbers.add((Double) singleUser.get("Longitude"));
-                latitude.add((Double) singleUser.get("Latitude"));
-                lat = (double) singleUser.get("Latitude");
-                lng = (double) singleUser.get("Longitude");
-                desc = (String) singleUser.get("PlaceName");
-                Status = (String) singleUser.get("Status");
-                user_id = (String) singleUser.get("UserID");
-                String value = (String) singleUser.get("Shopname");
-                LatLng latLng = new LatLng(lat, lng);
+
+            Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+            locationResult.addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+
+                        //iterate through each user, ignoring their UID
+                        for (Map.Entry<String, Object> entry : users.entrySet()) {
+
+                            //Get user map
+                            Map singleUser = (Map) entry.getValue();
+                            //Get phone field and append to list
+                            phoneNumbers.add((Double) singleUser.get("Longitude"));
+                            latitude.add((Double) singleUser.get("Latitude"));
+                            double lat = (double) singleUser.get("Latitude");
+                            double lng = (double) singleUser.get("Longitude");
+                            desc = (String) singleUser.get("PlaceName");
+                            Status = (String) singleUser.get("Status");
+                            user_id = (String) singleUser.get("UserID");
+                            String value = (String) singleUser.get("Shopname");
+                            LatLng latLng = new LatLng(lat, lng);
+                            // Set the map's camera position to the current location of the device.
+                            mLastKnownLocation = location;
+
+                            Location location1 = new Location("");
+                            location1.setLatitude(mLastKnownLocation.getLatitude());
+                            location1.setLongitude(mLastKnownLocation.getLongitude());
+
+                            Location location2 = new Location("");
+                            location2.setLatitude(lat);
+                            location2.setLongitude(lng);
 
 
-                Location location1 = new Location("");
-                location1.setLatitude(mLastKnownLocation.getLatitude());
-                location1.setLongitude(mLastKnownLocation.getLongitude());
+                            float distance = (float) location1.distanceTo(location2) / 1000;
+                            double roundOff = (double) Math.round(distance * 100) / 100;
 
-                Location location2 = new Location("");
-                location2.setLatitude(lat);
-                location2.setLongitude(lng);
-
-                float distance = (float) location1.distanceTo(location2) / 1000;
-                double roundOff = (double) Math.round(distance * 100) / 100;
-
-            if (Status.equals("Online")|| Status.equals("")) {
+                            if (Status.equals("Online") || Status.equals("")) {
 
 //            Toast.makeText(this, ""+ String.valueOf(roundOff)  , Toast.LENGTH_LONG).show();
-                if (mMap != null) {
-                    mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
-                            .position(new LatLng(lat, lng))
-                            .title(value + "is\b" + String.valueOf(roundOff) + "Km away")
-                            .snippet(user_id));
+                                if (mMap != null) {
+                                    mMap.addMarker(new MarkerOptions()
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelf))
+                                            .position(new LatLng(lat, lng))
+                                            .title(value + " is\b" + String.valueOf(roundOff) + "Km away")
+                                            .snippet(user_id));
 
-                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                        @Override
-                        public void onInfoWindowClick(Marker marker) {
-                            double lat = marker.getPosition().latitude;
-                            double lng = marker.getPosition().longitude;
+                                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                        @Override
+                                        public void onInfoWindowClick(Marker marker) {
+                                            double lat = marker.getPosition().latitude;
+                                            double lng = marker.getPosition().longitude;
 
-                            Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
-                            intent.putExtra("user_id", marker.getSnippet());
-                            startActivity(intent);
+                                            Intent intent = new Intent(MainActivity.this, StoreProfileBackpackActivity.class);
+                                            intent.putExtra("user_id", marker.getSnippet());
+                                            startActivity(intent);
 
+
+                                        }
+                                    });
+                                }
+                            }
 
                         }
-                    });
+
+
+                    }
                 }
-            }
+            });
+
+
+
+
+
 //            mMap.addMarker(new MarkerOptions()
 //                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).position(latLng).title("Farm"));
 
-            }
-
-            //System.out.println(phoneNumbers.toString());
-            //Toast.makeText(getContext(), phoneNumbers.toString(), Toast.LENGTH_SHORT).show();
         }
+
+        //System.out.println(phoneNumbers.toString());
+        //Toast.makeText(getContext(), phoneNumbers.toString(), Toast.LENGTH_SHORT).show();
+
 
 
     //INTENET PERMISSION

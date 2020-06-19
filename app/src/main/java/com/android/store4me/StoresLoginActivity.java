@@ -108,7 +108,7 @@ public class StoresLoginActivity extends AppCompatActivity {
 
                                 String user_id = mAuth.getCurrentUser().getUid();
                                 DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Stores").child(user_id);
-//
+
                                 String token = FirebaseInstanceId.getInstance().getToken();
                                 current_user_db.child("notificationTokens").child(token).setValue(true);
                             }

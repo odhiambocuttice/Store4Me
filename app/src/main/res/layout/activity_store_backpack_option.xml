@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1f1f1d"
+    tools:context=".StoreBackpackOption">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="225dp"
+        android:layout_height="211dp"
+        android:src="@drawable/shelves"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.086" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginBottom="396dp"
+        android:fontFamily="@font/roboto_mono_thin"
+        android:text="Choose User"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.471"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.094" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/backpack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BacpackOwner"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.331"
+        android:theme="@style/CheckBoxTheme"/>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/store"
+        android:layout_width="115dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="56dp"
+        android:text="StoreOwner"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/backpack"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/backpack"
+        app:layout_constraintTop_toBottomOf="@+id/backpack"
+        app:layout_constraintVertical_bias="0.0"
+        android:theme="@style/CheckBoxTheme"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

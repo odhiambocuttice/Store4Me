@@ -9,11 +9,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SplashView extends AppCompatActivity {
 
@@ -49,40 +47,49 @@ public class SplashView extends AppCompatActivity {
 //        logo.setAnimation(BottomAmin);
         slogan.setAnimation(BottomAmin);
 
-        mAuthlistener =  new FirebaseAuth.AuthStateListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser mfirebaseUser = mAuth.getCurrentUser();
-                if (mfirebaseUser != null){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent (SplashView.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }, SPLASHCREEN);
-                }else if (mfirebaseUser == null){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent signup = new Intent (SplashView.this, SignInActivity.class);
-                            startActivity(signup);
-                            finish();
-                        }
-                    }, SPLASHCREEN);
-                }
-
+            public void run() {
+                Intent intent = new Intent (SplashView.this, StoreBackpackOption.class);
+                startActivity(intent);
+                finish();
             }
+        }, SPLASHCREEN);
 
-        };
+//        mAuthlistener =  new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser mfirebaseUser = mAuth.getCurrentUser();
+//                if (mfirebaseUser != null){
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Intent intent = new Intent (SplashView.this, MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                    }, SPLASHCREEN);
+//                }else if (mfirebaseUser == null){
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Intent signup = new Intent (SplashView.this, SignInActivity.class);
+//                            startActivity(signup);
+//                            finish();
+//                        }
+//                    }, SPLASHCREEN);
+//                }
+//
+//            }
+//
+//        };
 
 
 
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthlistener);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        mAuth.addAuthStateListener(mAuthlistener);
+//    }
 }

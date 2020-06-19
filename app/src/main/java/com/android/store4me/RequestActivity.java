@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -98,25 +100,21 @@ public class RequestActivity extends AppCompatActivity {
                     loading.setVisibility(View.GONE);
                     Toast.makeText(RequestActivity.this, "Enter Your Backpack Contents", Toast.LENGTH_SHORT).show();
                 } else {
-
+                    //Save Data in BackpackRequests
                     DatabaseReference mUserDatabase = FirebaseDatabase.getInstance().getReference()
                             .child("BackpackRequest").child(user_id).push();
-
-
 
                     mUserDatabase.child("BackpackOwner").setValue(BackpackID);
                     mUserDatabase.child("BackPackContents").setValue(details);
                     mUserDatabase.child("Name").setValue(value3);
                     mUserDatabase.child("Shopname").setValue(value);
 
-//                    DatabaseReference mUserDatabase2 = FirebaseDatabase.getInstance().getReference()
-//                            .child("BackpackRequest2").child(user_id).push();
-//
-//
-//
-//                    mUserDatabase2.child("BackpackOwner").setValue(BackpackID);
-//                    mUserDatabase2.child("BackPackContents").setValue(details);
-//                    mUserDatabase2.child("Name").setValue(value);
+                    //Save Data in BackpackRequests2
+                    DatabaseReference mUserDatabase2 = FirebaseDatabase.getInstance().getReference()
+                            .child("BackpackRequest2").child(BackpackID).push();
+                    mUserDatabase2.child("BackPackContents").setValue(details);
+                    mUserDatabase2.child("Shopname").setValue(value);
+
 
                     DatabaseReference NotificationDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
@@ -192,7 +190,6 @@ public class RequestActivity extends AppCompatActivity {
                             });
 
 
-
 //                    Intent intent = new Intent(RequestActivity.this, StoreProfileBackpackActivity.class);
 //                    intent.putExtra("user_id", user_id);
 //                    startActivity(intent);
@@ -202,5 +199,33 @@ public class RequestActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_geolocate:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent(RequestActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finishAffinity();
+        startActivity(intent);
     }
 }

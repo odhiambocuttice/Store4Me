@@ -1,11 +1,11 @@
 package com.android.store4me;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -18,7 +18,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String MessTitle =remoteMessage.getNotification().getTitle();
         String MessBody =remoteMessage.getNotification().getBody();
-        String Click_Action =remoteMessage.getNotification().getClickAction();
+        String click_action =remoteMessage.getNotification().getClickAction();
         String Messmessage =remoteMessage.getData().get("message");
         String MessFrom =remoteMessage.getData().get("from_id");
 
@@ -30,23 +30,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(Click_Action);
+        Intent intent = new Intent(click_action);
         intent.putExtra("message", Messmessage);
         intent.putExtra("from_id", MessFrom);
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
         builder.setContentIntent(pendingIntent);
 
        int notificationId = (int) System.currentTimeMillis();
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-// notificationId is a unique int for each notification that you must define
-        notificationManager.notify(notificationId, builder.build());
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(notificationId, builder.build());
 
 
 
     }
+
+
 }
