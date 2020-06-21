@@ -21,6 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".MapsActivity"
+            android:theme="@style/AppTheme.Main">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
         <activity
             android:name=".StoreBackpackOption"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -28,10 +35,11 @@
             android:name=".AllRequestBackPackActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.Requests">
-        <intent-filter>
-            <action android:name="com.android.store4me.TARGET_REQUEST" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
+            <intent-filter>
+                <action android:name="com.android.store4me.TARGET_REQUEST" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".AllRequestsActivity"
@@ -58,12 +66,12 @@
         <activity android:name=".StoreMapActivity" />
         <activity android:name=".DemoActivity">
 
-<!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
 
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity android:name=".StoreProfileBackpackActivity" />
         <activity
@@ -75,13 +83,6 @@
         <activity android:name=".RequestPhoneNumberActivity" />
         <activity android:name=".Store_locationActivity" />
         <activity android:name=".StoresLoginActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".DriverMapActivity"

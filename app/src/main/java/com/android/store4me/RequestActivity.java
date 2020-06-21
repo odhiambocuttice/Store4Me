@@ -170,7 +170,7 @@ public class RequestActivity extends AppCompatActivity {
                                             findDirection.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    Intent intent = new Intent(RequestActivity.this, DriverMapActivity.class);
+                                                    Intent intent = new Intent(RequestActivity.this, MapsActivity.class);
                                                     intent.putExtra("user_id", user_id);
                                                     startActivity(intent);
                                                     finish();
