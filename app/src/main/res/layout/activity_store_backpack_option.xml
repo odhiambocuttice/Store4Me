@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#1f1f1d"
-    tools:context=".StoreBackpackOption">
+    tools:context=".SplashView.StoreBackpackOption">
 
 
     <ImageView
@@ -28,7 +28,7 @@
         android:layout_marginTop="52dp"
         android:layout_marginBottom="396dp"
         android:fontFamily="@font/roboto_mono_thin"
-        android:text="Choose User"
+        android:text="Select User"
         android:textAlignment="center"
         android:textColor="#fff"
         android:textSize="24sp"
@@ -43,7 +43,7 @@
         android:id="@+id/backpack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BacpackOwner"
+        android:text="BackpackOwner"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,5 +67,20 @@
         app:layout_constraintTop_toBottomOf="@+id/backpack"
         app:layout_constraintVertical_bias="0.0"
         android:theme="@style/CheckBoxTheme"/>
+
+    <TextView
+        android:id="@+id/instructionsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono_thin"
+        android:text="User Manual"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/store"
+        app:layout_constraintHorizontal_bias="0.295"
+        app:layout_constraintStart_toStartOf="@+id/store"
+        app:layout_constraintTop_toBottomOf="@+id/store" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

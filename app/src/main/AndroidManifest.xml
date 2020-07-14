@@ -21,19 +21,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MapsActivity"
+        <activity
+            android:name=".SplashView.OnboadInstructionsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".Backpack.PasswordActivity" />
+        <activity
+            android:name=".Backpack.MapsActivity"
             android:theme="@style/AppTheme.Main">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".StoreBackpackOption"
+            android:name=".SplashView.StoreBackpackOption"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AllRequestBackPackActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".Backpack.AllRequestBackPackActivity"
+            android:parentActivityName=".Backpack.MainActivity"
             android:theme="@style/AppTheme.Requests">
             <intent-filter>
                 <action android:name="com.android.store4me.TARGET_REQUEST" />
@@ -42,12 +49,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AllRequestsActivity"
-            android:parentActivityName=".StoreProfileActivity"
+            android:name=".Store.AllRequestsActivity"
+            android:parentActivityName=".Store.StoreProfileActivity"
             android:theme="@style/AppTheme.Requests" />
-        <activity android:name=".RequestReceivedActivity">
+        <activity android:name=".Store.RequestReceivedActivity">
             <intent-filter>
                 <action android:name="com.android.store4me.TARGET_REQUEST" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -59,12 +67,12 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".SignInActivity" />
+        <activity android:name=".Backpack.SignInActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Backpack.MainActivity"
             android:theme="@style/AppTheme.Main" />
-        <activity android:name=".StoreMapActivity" />
-        <activity android:name=".DemoActivity">
+        <activity android:name=".Store.StoreMapActivity" />
+        <activity android:name=".Directions.DemoActivity">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -73,24 +81,23 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".StoreProfileBackpackActivity" />
+        <activity android:name=".Backpack.StoreProfileBackpackActivity" />
         <activity
-            android:name=".RequestActivity"
+            android:name=".Backpack.RequestActivity"
             android:label="           Request"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".StoreProfileActivity" />
-        <activity android:name=".VerifyPhoneActivity" />
-        <activity android:name=".RequestPhoneNumberActivity" />
-        <activity android:name=".Store_locationActivity" />
-        <activity android:name=".StoresLoginActivity">
-        </activity>
+            android:parentActivityName=".Backpack.MainActivity" />
+        <activity android:name=".Store.StoreProfileActivity" />
+        <activity android:name=".PhoneNumber.VerifyPhoneActivity" />
+        <activity android:name=".PhoneNumber.RequestPhoneNumberActivity" />
+        <activity android:name=".Store.Store_locationActivity" />
+        <activity android:name=".Store.StoresLoginActivity" />
         <activity
-            android:name=".DriverMapActivity"
+            android:name=".Store.DriverMapActivity"
             android:theme="@style/AppTheme.Main" />
-        <activity android:name=".Registration3Activity" />
-        <activity android:name=".RegistrationActivity" />
+        <activity android:name=".Store.Registration3Activity" />
+        <activity android:name=".Backpack.RegistrationActivity" />
         <activity
-            android:name=".SplashView"
+            android:name=".SplashView.SplashView"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -100,7 +107,7 @@
         </activity>
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".Mes.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

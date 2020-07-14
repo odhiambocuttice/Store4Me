@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context=".RequestReceivedActivity">
+    tools:context=".Store.RequestReceivedActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,17 +36,6 @@
                 android:text="Backpack Details "
                 android:textSize="28sp" />
 
-            <TextView
-                android:id="@+id/txtBackpackNameID"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="#0000"
-                android:drawableStart="@drawable/user"
-                android:drawablePadding="20dp"
-                android:padding="16dp"
-                android:textSize="16sp" />
-
         </LinearLayout>
 
     </LinearLayout>
@@ -60,12 +49,22 @@
         <TextView
             android:id="@+id/BackpackDetails"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="#0000"
             android:paddingBottom="40dp"
             android:text="Backpack Details "
             android:textColor="#1f1f1d" />
+
+        <TextView
+            android:id="@+id/txtBackpackNameID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Backpack Name "
+            android:background="#0000"
+            android:textColor="#1f1f1d"  />
+
     </LinearLayout>
 
 
