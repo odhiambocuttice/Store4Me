@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,7 +40,7 @@ public class RequestReceivedActivity extends AppCompatActivity {
         mBackpackID.setText(MessFrom);
 
         user_id = getIntent().getStringExtra("user_id");
-        request_id = getIntent().getStringExtra("request_id");
+        request_id = getIntent().getStringExtra("request");
 
 
 //        final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("BackpackRequest");
@@ -72,15 +73,17 @@ public class RequestReceivedActivity extends AppCompatActivity {
             }
         });
 
-//        mDeclinebtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mCornfirmbtn.setEnabled(false);
-//                final DatabaseReference mDb = FirebaseDatabase.getInstance().getReference().child("BackpackRequest2");
-//                mDb.child("Status").setValue("Declines");
-//
-//            }
-//        });
+        mDeclinebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCornfirmbtn.setEnabled(false);
+                Toast.makeText(RequestReceivedActivity.this, "Request Sent", Toast.LENGTH_LONG).show();
+                final DatabaseReference mDb = FirebaseDatabase.getInstance().getReference().child("BackpackRequest")
+                        .child(user_id).child(request_id);
+                mDb.child("Status").setValue("Declined");
+
+            }
+        });
     }
 
 }
